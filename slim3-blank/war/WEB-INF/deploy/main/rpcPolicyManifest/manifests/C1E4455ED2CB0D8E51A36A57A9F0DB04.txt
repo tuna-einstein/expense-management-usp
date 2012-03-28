@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.LoggedInUserFetcher
+path: 01DD7A4EC1301E5EE9E7EE917429F35E.gwt.rpc
