@@ -1,11 +1,14 @@
 package com.usp.expmgmt.server.controller;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slim3.controller.Controller;
 import org.slim3.controller.Navigation;
+import org.slim3.datastore.Datastore;
 import org.slim3.util.RequestLocator;
 import org.slim3.util.ResponseLocator;
 import org.slim3.util.ServletContextLocator;
@@ -16,6 +19,9 @@ import com.google.gdata.client.authn.oauth.GoogleOAuthHelper;
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
 import com.google.gdata.client.authn.oauth.OAuthException;
 import com.google.gdata.client.authn.oauth.OAuthHmacSha1Signer;
+import com.usp.expmgmt.server.meta.ExpenseReportMeta;
+import com.usp.expmgmt.server.meta.GoogleLoginInfoMeta;
+import com.usp.expmgmt.shared.model.GoogleLoginInfo;
 
 public class LoginController extends Controller {
     
@@ -27,7 +33,23 @@ public class LoginController extends Controller {
         HttpServletRequest request = RequestLocator.get();
         HttpServletResponse response = ResponseLocator.get();
         ServletContext servletContext = ServletContextLocator.get();
+        String ownerEmail = getOwnerEmail();
+        if (ownerEmail == null) {
+            UserService userService = UserServiceFactory.getUserService();
+            response.sendRedirect(userService.createLoginURL("/login"));
+        }
         
+        GoogleLoginInfoMeta loginMeta = GoogleLoginInfoMeta.get();
+        List<GoogleLoginInfo> list =Datastore.query(loginMeta)
+                .filter(loginMeta.ownerEmail.equal(ownerEmail))
+                .asList();
+        
+        if (!list.isEmpty()) {
+            request.getSession().setAttribute("GoogleLoginInfo", list.get(0));
+            return forward("/");
+        }
+        
+        request.getSession().setAttribute("ownerEmail", ownerEmail);
         GoogleOAuthParameters oauthParameters = new GoogleOAuthParameters();
         oauthParameters.setOAuthConsumerKey(CONSUMER_KEY);
         oauthParameters.setOAuthConsumerSecret(CONSUMER_SECRET);
@@ -63,6 +85,7 @@ public class LoginController extends Controller {
             // is redirected and the callback is invoked. 
             request.getSession().setAttribute("oauthTokenSecret",
                     oauthParameters.getOAuthTokenSecret());
+           
 
 //            response.getWriter()
 //            .print("<a href=\""
@@ -88,5 +111,14 @@ public class LoginController extends Controller {
 //                                     "\">sign in</a>.</p>");
 //        }
       return null;
+    }
+    
+    private String getOwnerEmail() {
+        HttpServletRequest request = RequestLocator.get();
+        if (request.getUserPrincipal() != null) {
+            String ownerEmail = request.getUserPrincipal().getName();
+            return ownerEmail;
+        }
+        return null;
     }
 }

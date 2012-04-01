@@ -97,7 +97,7 @@ public class Main implements EntryPoint {
             }
             public void onSuccess(String result) {
                 LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
-                if (!info.getEmail().equals("")) {
+                if (info.getLoginUrl().equals("")) {
                     ownerEmail = info.getEmail();
                     oracle.addAll(info.getContactList());
                     dcPanelClaims.setOwnerEmail(ownerEmail);

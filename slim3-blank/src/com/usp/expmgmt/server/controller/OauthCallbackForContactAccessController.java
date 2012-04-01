@@ -4,12 +4,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slim3.controller.Controller;
 import org.slim3.controller.Navigation;
+import org.slim3.datastore.Datastore;
 import org.slim3.util.RequestLocator;
 
+import com.google.appengine.api.datastore.Transaction;
 import com.google.gdata.client.authn.oauth.GoogleOAuthHelper;
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
 import com.google.gdata.client.authn.oauth.OAuthException;
 import com.google.gdata.client.authn.oauth.OAuthHmacSha1Signer;
+import com.usp.expmgmt.shared.model.GoogleLoginInfo;
 
 public class OauthCallbackForContactAccessController extends Controller {
 
@@ -32,6 +35,8 @@ public class OauthCallbackForContactAccessController extends Controller {
         HttpServletRequest req = RequestLocator.get(); 
         String oauthTokenSecret = (String) req.getSession().getAttribute(
                 "oauthTokenSecret");
+        String ownerEmail = (String) req.getSession().getAttribute(
+                "ownerEmail");
         oauthParameters.setOAuthTokenSecret(oauthTokenSecret);
 
         // The query string should contain the oauth token, so we can just
@@ -39,16 +44,27 @@ public class OauthCallbackForContactAccessController extends Controller {
         // parse and add the parameters to our instance of oauthParameters
         oauthHelper.getOAuthParametersFromCallback(req.getQueryString(),
             oauthParameters);
-        
+
         try {
             // Now that we have all the OAuth parameters we need, we can
             // generate an access token and access token secret. These
             // are the values we want to keep around, as they are 
             // valid for all API calls in the future until a user revokes
             // our access.
-            req.getSession().setAttribute("accessToken", oauthHelper.getAccessToken(oauthParameters));
-            req.getSession().setAttribute("accessTokenSecret", oauthParameters.getOAuthTokenSecret());
+            GoogleLoginInfo loginInfo = new GoogleLoginInfo();
+
+
+            Transaction tx = Datastore.beginTransaction();
+            loginInfo.setOwnerEmail(ownerEmail);
+            loginInfo.setAccessToken(oauthHelper.getAccessToken(oauthParameters));
+            loginInfo.setAccessTokenSecrete(oauthParameters.getOAuthTokenSecret());
+            Datastore.put(loginInfo);
+            tx.commit();
+            req.getSession().setAttribute("GoogleLoginInfo", loginInfo);
             
+        //    req.getSession().setAttribute("accessToken", oauthHelper.getAccessToken(oauthParameters));
+         //   req.getSession().setAttribute("accessTokenSecret", oauthParameters.getOAuthTokenSecret());
+       
         } catch (OAuthException e) {
             // Something went wrong. Usually, you'll end up here if we have invalid
             // oauth tokens
