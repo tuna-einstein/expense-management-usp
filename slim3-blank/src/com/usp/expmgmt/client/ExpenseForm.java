@@ -70,7 +70,7 @@ public class ExpenseForm extends FormPanel {
         verticalPanel.add(dateBox);
         
         // Add textbox for email and Amount
-         verticalPanel.add(getEmailAndAmount());
+         verticalPanel.add(anchor);
          verticalPanel.add(button);
          
          // add the verticalPanel to form
@@ -82,6 +82,7 @@ public class ExpenseForm extends FormPanel {
          anchor.addClickHandler(new ClickHandler() {
              public void onClick(ClickEvent event) {
                  verticalPanel.add(getEmailAndAmount());
+                 verticalPanel.add(anchor);
                  verticalPanel.add(button);
              }
          });
@@ -90,12 +91,16 @@ public class ExpenseForm extends FormPanel {
                 submit();
             }
          });
- 
+
          addFormHandler(new FormHandler() {
             
             public void onSubmitComplete(FormSubmitCompleteEvent event) {
-                Window.alert(event.getResults());
                 
+                Window.alert(event.getResults());
+               while (verticalPanel.getWidgetCount() != 0) {
+                   verticalPanel.remove(0);
+               }
+                init(ownerEmail.getText());
             }
             
             public void onSubmit(FormSubmitEvent event) {
@@ -124,14 +129,25 @@ public class ExpenseForm extends FormPanel {
         textBoxList.add(box);
         TextBox amount = new TextBox();
         box.getTextBox().setName(EMAIL);
-        box.getTextBox().setText("email@gmail.com");
+        box.getTextBox().setText("");
         amount.setName(AMOUNT);
         amount.setText("0.00");
         
-        HorizontalPanel hp = new HorizontalPanel();
+        final HorizontalPanel hp = new HorizontalPanel();
         hp.add(box);
         hp.add(amount);
-        hp.add(anchor);
+        
+        
+       Anchor remove = new Anchor( "Remove");
+       
+        hp.add(remove);
+        remove.addClickHandler(new ClickHandler() {
+            
+            public void onClick(ClickEvent event) {
+                hp.removeFromParent();
+            }
+        });
+        
         return hp;
     }
  }

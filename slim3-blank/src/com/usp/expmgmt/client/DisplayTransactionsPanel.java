@@ -76,6 +76,7 @@ public class DisplayTransactionsPanel extends FlexTable {
         });       
     }
 
+    
 //    private void addExpenseReport(ExpenseReportJSO report) {
 //        flexTable.insertRow(flexTable.getRowCount());
 //        flexTable.getFlexCellFormatter().setColSpan(flexTable.getRowCount() - 1, 0, 2);

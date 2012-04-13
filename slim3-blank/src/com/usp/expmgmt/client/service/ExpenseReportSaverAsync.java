@@ -9,4 +9,6 @@ public interface ExpenseReportSaverAsync {
     public void save(Map<String, Object> input, AsyncCallback<ExpenseReport> callback);
 
     public void save(String name, AsyncCallback<String> asyncCallback);
+
+    public void delete(String json, AsyncCallback<String> callback);
 }

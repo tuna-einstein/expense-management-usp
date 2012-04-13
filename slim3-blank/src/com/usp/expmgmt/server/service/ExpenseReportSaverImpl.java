@@ -34,4 +34,16 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         tx.commit();
         return gson.toJson(ExpenseContent.fromExpenseReport(report));
     }
+    
+    public String delete(String json) {
+        Gson gson = new Gson();
+        ExpenseContent content = gson.fromJson(json, ExpenseContent.class);
+        ExpenseReport report = content.toExpenseReport();
+        //gson.
+       // BeanUtil.copy(input, report);
+        Transaction tx = Datastore.beginTransaction();
+        Datastore.delete(report.getKey());
+        tx.commit();
+        return gson.toJson(ExpenseContent.fromExpenseReport(report));
+    }
 }

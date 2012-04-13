@@ -19,9 +19,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -29,6 +31,7 @@ import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.usp.expmgmt.client.DisplayTransactionsPanel.Type;
 import com.usp.expmgmt.client.service.ExpenseReportRetriever;
 import com.usp.expmgmt.client.service.ExpenseReportRetrieverAsync;
@@ -38,10 +41,10 @@ import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
 import com.usp.expmgmt.shared.util.LogInInfo;
 
 public class Main implements EntryPoint {
-    
+
     public static final String EMAIL = "emailArray";
     public static final String AMOUNT = "amountArray";
-    
+
     final Anchor anchor = new Anchor("Add More");
     final FormPanel form = new FormPanel(new NamedFrame("_self"));
     final VerticalPanel panel = new VerticalPanel();
@@ -51,40 +54,44 @@ public class Main implements EntryPoint {
     int count = 0;
     final HTML htmlLogout = new HTML();
     final HTML projectName = new HTML();
-   private String ownerEmail;
-   
-   final DisplayTransactionsPanel dcPanelClaims = new DisplayTransactionsPanel(Type.CLAIM);
-   final DisplayTransactionsPanel dcPanelDebts = new DisplayTransactionsPanel(Type.DEBT);
-   
-   private void init() {
-       HorizontalPanel hpanelForTransactionDisplay = new HorizontalPanel();
-       projectName.setHTML("<h1> Expense Management</h1>");
-       
-       
-       final TabPanel displayTransactionsTabs = new TabPanel();
-       displayTransactionsTabs.addSelectionHandler(new MyTabListener(displayTransactionsTabs));
-       
-       hpanelForTransactionDisplay.add( displayTransactionsTabs);
-       hpanelForTransactionDisplay.setWidth("100%");
-       hpanelForTransactionDisplay.add(expenseForm);
-      expenseForm.setOracle(oracle);
-       hpanelForTransactionDisplay.add(htmlLogout);
-       
-      
-       displayTransactionsTabs.add(dcPanelClaims, "Claims");
-      
-       
-      
-       displayTransactionsTabs.add(dcPanelDebts, "Debts");
-       
-       displayTransactionsTabs.setWidth("50%");
-       displayTransactionsTabs.setHeight("50%");
-       displayTransactionsTabs.selectTab(0);
-       RootPanel.get("expense-display").add(hpanelForTransactionDisplay);
-       RootPanel.get("project-name").add(projectName);
-       
-       
-   }
+    final Hyperlink refresh = new Hyperlink();
+    private String ownerEmail;
+
+    final DisplayTransactionsPanel dcPanelClaims = new DisplayTransactionsPanel(Type.CLAIM);
+    final DisplayTransactionsPanel dcPanelDebts = new DisplayTransactionsPanel(Type.DEBT);
+    final TabPanel displayTransactionsTabs = new TabPanel();
+
+    private void init() {
+        HorizontalPanel hpanelForTransactionDisplay = new HorizontalPanel();
+        projectName.setHTML("<h1> Expense Management</h1>");
+
+
+
+
+
+        displayTransactionsTabs.addSelectionHandler(new MyTabListener(displayTransactionsTabs));
+
+        hpanelForTransactionDisplay.add( displayTransactionsTabs);
+        hpanelForTransactionDisplay.setWidth("100%");
+        hpanelForTransactionDisplay.add(expenseForm);
+        expenseForm.setOracle(oracle);
+        hpanelForTransactionDisplay.add(htmlLogout);
+
+
+        displayTransactionsTabs.add(dcPanelClaims, "Claims");
+
+
+
+        displayTransactionsTabs.add(dcPanelDebts, "Debts");
+
+        displayTransactionsTabs.setWidth("50%");
+        displayTransactionsTabs.setHeight("50%");
+        displayTransactionsTabs.selectTab(0);
+        RootPanel.get("expense-display").add(hpanelForTransactionDisplay);
+        RootPanel.get("project-name").add(projectName);
+
+
+    }
     public void onModuleLoad() {
         projectName.setHTML("<h1>Loading.....</h1>");
         RootPanel.get("project-name").add(projectName);
@@ -92,8 +99,8 @@ public class Main implements EntryPoint {
         ownerEmailfetcher.getOwnerEmail( new AsyncCallback<String>() {
 
             public void onFailure(Throwable caught) {
-               Window.alert(caught.toString());
-              
+                Window.alert(caught.toString());
+
             }
             public void onSuccess(String result) {
                 LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
@@ -105,44 +112,42 @@ public class Main implements EntryPoint {
                     dcPanelDebts.setOwnerEmail(ownerEmail);
                     init();
                     expenseForm.init(ownerEmail);
-                   
-                    
+
+
                 } else {
                     Window.open(info.getLoginUrl(),  "_self", "");
                 }
             }
         });
-        
+
         //fetchDataFromServer();
-      
- 
-      
-        
-       // displayTransactionsTabs.
+
+
+
+
+        // displayTransactionsTabs.
         // Add it to the root panel.
-       
-        
-     
 
-     //   RootPanel.get("logout-ref").add(htmlLogout);
 
-//        form.setAction("/save_expense/");
-//        form.setWidget(panel);
-   
+
+
+        //   RootPanel.get("logout-ref").add(htmlLogout);
+
+        //        form.setAction("/save_expense/");
+        //        form.setWidget(panel);
+
         button.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 form.submit();
             }
         });
-        
-
     }
-    
+
     private void parseJsonData(String json) {
 
         Window.alert(json);
         JSONValue value = JSONParser.parse(json);
-        
+
         JSONArray jsonArray = value.isArray();
 
         if (jsonArray != null) {
@@ -161,7 +166,7 @@ public class Main implements EntryPoint {
         try {
 
             RequestBuilder rb = new RequestBuilder(
-                    RequestBuilder.GET, "/contacts");
+                RequestBuilder.GET, "/contacts");
 
             rb.setCallback(new RequestCallback() {
                 public void onResponseReceived(Request request, Response response) {
@@ -179,7 +184,10 @@ public class Main implements EntryPoint {
             Window.alert("Error occurred" + e.getMessage());
         }
     }
+
 }
+
+
 
 class MyTabListener implements SelectionHandler<Integer> {
     private static ExpenseReportRetrieverAsync service = GWT.create(ExpenseReportRetriever.class);
@@ -188,8 +196,8 @@ class MyTabListener implements SelectionHandler<Integer> {
         this.panel = panel;
     }
     public void onSelection(SelectionEvent<Integer> event) {
-       // Window.alert(event.getSelectedItem().toString());
-   final DisplayTransactionsPanel dp = (DisplayTransactionsPanel) panel.getWidget(event.getSelectedItem());
+        // Window.alert(event.getSelectedItem().toString());
+        final DisplayTransactionsPanel dp = (DisplayTransactionsPanel) panel.getWidget(event.getSelectedItem());
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             public void onFailure(Throwable caught) {
                 Window.alert(caught.getMessage());
@@ -199,11 +207,11 @@ class MyTabListener implements SelectionHandler<Integer> {
             }
         };
         if (dp.getType() == Type.CLAIM) {
-        service.getClaimsAsJson(dp.getOwnerEmail(), callback);
-    } else if (dp.getType() == Type.DEBT) {
-        service.getDebtsAsJson(dp.getOwnerEmail(), callback);
+            service.getClaimsAsJson(dp.getOwnerEmail(), callback);
+        } else if (dp.getType() == Type.DEBT) {
+            service.getDebtsAsJson(dp.getOwnerEmail(), callback);
+        }
     }
-    }
-    
+
 }
 

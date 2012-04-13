@@ -11,4 +11,6 @@ public interface ExpenseReportSaver extends RemoteService {
     public String save(String json);
 
     ExpenseReport save(Map<String, Object> input);
+
+    public String delete(String json);
 }

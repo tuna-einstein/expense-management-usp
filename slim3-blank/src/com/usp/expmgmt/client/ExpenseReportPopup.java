@@ -111,18 +111,23 @@ public class ExpenseReportPopup  extends PopupPanel {
         }
      private static final ExpenseReportSaverAsync service = GWT.create(ExpenseReportSaver.class);
 
+     AsyncCallback<String> callback = new AsyncCallback<String>() {
 
+         public void onFailure(Throwable caught) {
+             Window.alert(caught.getMessage());
+         }
+
+         public void onSuccess(String json) {
+             popup.hide(true);
+             Window.alert("Update Successfull");
+         }
+     };
         public void onClick(ClickEvent event) {
-            service.save(popup.getJson(), new AsyncCallback<String>() {
-                
-                        public void onFailure(Throwable caught) {
-                    Window.alert(caught.getMessage());
-                }
-
-                public void onSuccess(String json) {
-                    Window.alert("Update Successfull");
-                }
-            });
+            if (uiObject.getName().equals("Save")) {
+            service.save(popup.getJson(), callback);
+            } else if (uiObject.getName().equals("Delete")) {
+                service.delete(popup.getJson(), callback);
+            }
         }
     }
     
