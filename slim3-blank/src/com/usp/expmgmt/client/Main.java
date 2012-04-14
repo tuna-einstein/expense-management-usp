@@ -64,26 +64,14 @@ public class Main implements EntryPoint {
     private void init() {
         HorizontalPanel hpanelForTransactionDisplay = new HorizontalPanel();
         projectName.setHTML("<h1> Expense Management</h1>");
-
-
-
-
-
         displayTransactionsTabs.addSelectionHandler(new MyTabListener(displayTransactionsTabs));
-
         hpanelForTransactionDisplay.add( displayTransactionsTabs);
         hpanelForTransactionDisplay.setWidth("100%");
         hpanelForTransactionDisplay.add(expenseForm);
         expenseForm.setOracle(oracle);
         hpanelForTransactionDisplay.add(htmlLogout);
-
-
         displayTransactionsTabs.add(dcPanelClaims, "Claims");
-
-
-
         displayTransactionsTabs.add(dcPanelDebts, "Debts");
-
         displayTransactionsTabs.setWidth("50%");
         displayTransactionsTabs.setHeight("50%");
         displayTransactionsTabs.selectTab(0);

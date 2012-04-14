@@ -1,5 +1,7 @@
 package com.usp.expmgmt.client;
 
+import net.sourceforge.htmlunit.corejs.javascript.ast.DoLoop;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -9,21 +11,29 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.usp.expmgmt.client.service.UserExpenseReportRetriever;
 import com.usp.expmgmt.client.service.UserExpenseReportRetrieverAsync;
 import com.usp.expmgmt.shared.jso.JavaScriptObjects.UserAndAmountJSO;
 
-public class DisplayTransactionsPanel extends FlexTable {
+public class DisplayTransactionsPanel extends ScrollPanel {
     public static enum Type  {
         CLAIM, DEBT, NET
     };
     
     private final Type type;
     private String ownerEmail;
+    private final FlexTable flexTable = new FlexTable();
+    private final DisplayUserExpenseReportList reportList = new DisplayUserExpenseReportList();
     public DisplayTransactionsPanel(Type type ) {
         this.type = type;
     }
 
+    private void removeAll() {
+        if(this.getWidget() != null) {
+        this.remove(this.getWidget());
+        }
+    }
     public Type getType() {
         return type;
     }
@@ -36,44 +46,45 @@ public class DisplayTransactionsPanel extends FlexTable {
         return ownerEmail;
     }
     public void init(String json) {
-        removeAllRows();
+        removeAll();
+        add(flexTable);
+        flexTable.removeAllRows();
         JsArray<UserAndAmountJSO> userAndAmountArray = UserAndAmountJSO.asArrayOfUserAndAmountJSO(json);
         for (int i=0; i< userAndAmountArray.length(); i++) {
             addUserAndAmountJSO(userAndAmountArray.get(i));
         }
 
-       addClickHandler(new ClickHandler() {
-           private  UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
-            public void onClick(ClickEvent event) {
-                Cell cell = getCellForEvent(event);
-                final int row = cell.getRowIndex();
-                final HTML htmlEmail = (HTML)  getWidget(row, 0);
-                final int col = getCellCount(row);
-                
-                AsyncCallback callback =  new AsyncCallback<String>() {
-                    public void onFailure(Throwable caught) {
-                        Window.alert(caught.getMessage());
-                    }
-
-                    public void onSuccess(String json) {
-                    //    Window.alert(json);
-                        UserExpenseReportListPopup pop = new UserExpenseReportListPopup();
-                        pop.init(json);
-                        pop.setAnimationEnabled(true);
-                        pop.setPopupPosition(
-                            getWidget(row, col - 1).getAbsoluteLeft() + getWidget(row, col - 1).getOffsetWidth(),
-                            getWidget(row, col - 1).getAbsoluteTop() + getWidget(row, col - 1).getOffsetHeight()
-                            );
-                        pop.show();
-                    }
-                };
-                if (type == Type.CLAIM) {
-                    service.getUserExpenseReportsAsJson(ownerEmail, htmlEmail.getHTML(), callback);
-                } else if (type == Type.DEBT) {
-                    service.getUserExpenseReportsAsJson(htmlEmail.getHTML(), ownerEmail, callback);
-                }
-            }
-        });       
+//       addClickHandler(new ClickHandler() {
+//           private  UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
+//            public void onClick(ClickEvent event) {
+//                Cell cell = getCellForEvent(event);
+//                final int row = cell.getRowIndex();
+//                final HTML htmlEmail = (HTML)  getWidget(row, 0);
+//                final int col = getCellCount(row);
+//                
+//                AsyncCallback callback =  new AsyncCallback<String>() {
+//                    public void onFailure(Throwable caught) {
+//                        Window.alert(caught.getMessage());
+//                    }
+//
+//                    public void onSuccess(String json) {
+//                        UserExpenseReportListPopup pop = new UserExpenseReportListPopup();
+//                        pop.init(json);
+//                        pop.setAnimationEnabled(true);
+//                        pop.setPopupPosition(
+//                            getWidget(row, col - 1).getAbsoluteLeft() + getWidget(row, col - 1).getOffsetWidth(),
+//                            getWidget(row, col - 1).getAbsoluteTop() + getWidget(row, col - 1).getOffsetHeight()
+//                            );
+//                        pop.show();
+//                    }
+//                };
+//                if (type == Type.CLAIM) {
+//                    service.getUserExpenseReportsAsJson(ownerEmail, htmlEmail.getHTML(), callback);
+//                } else if (type == Type.DEBT) {
+//                    service.getUserExpenseReportsAsJson(htmlEmail.getHTML(), ownerEmail, callback);
+//                }
+//            }
+//        });       
     }
 
     
@@ -91,41 +102,53 @@ public class DisplayTransactionsPanel extends FlexTable {
 //    }
 
     private void addUserAndAmountJSO(UserAndAmountJSO userAndAmount) {
-        insertRow(getRowCount());
-        setWidget(getRowCount() - 1, 0,
+        flexTable.insertRow(flexTable.getRowCount());
+        flexTable.setWidget(flexTable.getRowCount() - 1, 0,
             new HTML(userAndAmount.getEmail()));
         Anchor anchor = new Anchor("show");
-    //    anchor.addClickHandler(new AnchorClickHandler(anchor));
+        anchor.setName(userAndAmount.getEmail());
+        anchor.addClickHandler(new AnchorClickHandler(anchor));
 
-       setText(getRowCount() - 1, 1, String.valueOf(userAndAmount.getAmount()));
-       setWidget(getRowCount() - 1, 2, anchor);
+       flexTable.setText(flexTable.getRowCount() - 1, 1, String.valueOf(userAndAmount.getAmount()));
+       flexTable.setWidget(flexTable.getRowCount() - 1, 2, anchor);
         
     }
 
-//    private static class AnchorClickHandler implements ClickHandler {
-//        UIObject uiObject;
-//        AnchorClickHandler(UIObject uiObject) {
-//            this.uiObject = uiObject;
-//        }
-//     private static final UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
-//
-//
-//        public void onClick(ClickEvent event) {
-//            service.getUserClaimsAsJson("hello@gmail.com", "email1@gmail.com", new AsyncCallback<String>() {
-//                        public void onFailure(Throwable caught) {
-//                    Window.alert(caught.getMessage());
-//                }
-//
-//                public void onSuccess(String json) {
-//                    //      Window.alert(result);
-//                    UserExpenseReportListPopup pop = new UserExpenseReportListPopup();
-//                    pop.init(json);
-//                    pop.setAnimationEnabled(true);
-//                    pop.setPopupPosition(uiObject.getAbsoluteLeft(), uiObject.getAbsoluteTop());
-//                    pop.show();
-//                }
-//            });
-//        }
-//    }
+    private class AnchorClickHandler implements ClickHandler {
+        Anchor anchor;
+        AnchorClickHandler(Anchor anchor) {
+            this.anchor = anchor;
+        }
+     private final UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
+
+     AsyncCallback<String> callback =  new AsyncCallback<String>() {
+         public void onFailure(Throwable caught) {
+             Window.alert(caught.getMessage());
+         }
+
+         public void onSuccess(String json) {
+//             UserExpenseReportListPopup pop = new UserExpenseReportListPopup();
+//             pop.init(json);
+//             pop.setAnimationEnabled(true);
+//             pop.setPopupPosition(
+//                 anchor.getAbsoluteLeft() + anchor.getOffsetWidth(),
+//                 anchor.getAbsoluteTop() + anchor.getOffsetHeight()
+//                 );
+//             pop.show();
+             reportList.init(json);
+             removeAll();
+             add(reportList);
+         }
+         
+     };
+    
+        public void onClick(ClickEvent event) {
+            if (type == Type.CLAIM) {
+                service.getUserExpenseReportsAsJson(ownerEmail, anchor.getName(), callback);
+            } else if (type == Type.DEBT) {
+                service.getUserExpenseReportsAsJson(anchor.getName(), ownerEmail, callback);
+            }
+        }
+    }
 }
 
