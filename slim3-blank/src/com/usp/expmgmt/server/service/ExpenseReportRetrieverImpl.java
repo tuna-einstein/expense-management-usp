@@ -14,6 +14,7 @@ import com.usp.expmgmt.shared.model.ExpenseReport;
 import com.usp.expmgmt.shared.util.ExpenseContent;
 import com.usp.expmgmt.shared.util.SerializableWhitelist;
 import com.usp.expmgmt.shared.util.UserMapperAmountReducer;
+import com.usp.expmgmt.shared.util.UserMapperAmountReducer.UserAndAmount;
 
 public class ExpenseReportRetrieverImpl implements ExpenseReportRetriever {
     public List<ExpenseReport> getClaims (String email) {
@@ -39,6 +40,17 @@ public class ExpenseReportRetrieverImpl implements ExpenseReportRetriever {
                 .asList();
     }
 
+    public String getNetPaymentAsJson (String loggedInUser) {
+        List<UserAndAmount> claims = UserMapperAmountReducer.mapReducerForClaims(getClaims(loggedInUser));
+        List<UserAndAmount> debts = UserMapperAmountReducer.mapReducerForDebts(getDebts(loggedInUser), loggedInUser);
+        List<UserAndAmount> nets = UserMapperAmountReducer.mapReducerForNetPayment(claims, debts);
+        
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = gsonBuilder.create();
+        return gson.toJson(nets.toArray());
+    }
+    
     public String getDebtsAsJson (String email) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.excludeFieldsWithoutExposeAnnotation();
@@ -47,6 +59,7 @@ public class ExpenseReportRetrieverImpl implements ExpenseReportRetriever {
             UserMapperAmountReducer.mapReducerForDebts(getDebts(email), email).toArray()
             );
     }
+    
     
     public String getExpenseReportAsJson(String encodedKey) {
         Key key = KeyFactory.stringToKey(encodedKey);

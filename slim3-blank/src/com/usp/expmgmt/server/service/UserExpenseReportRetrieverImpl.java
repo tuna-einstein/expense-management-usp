@@ -39,7 +39,7 @@ public class UserExpenseReportRetrieverImpl implements UserExpenseReportRetrieve
     /**
      * fetches expense reports whose ownerEmail matches with OwnerEmail and EmailList contains userEmail
      */
-    private List<ExpenseReport> getReports(String ownerEmail, String userEmail) {
+    public static List<ExpenseReport> getReports(String ownerEmail, String userEmail) {
         ExpenseReportMeta reportMeta = ExpenseReportMeta.get();
         List<ExpenseReport> reports =  Datastore.query(reportMeta)
                 .filter(reportMeta.ownerEmail.equal(ownerEmail))

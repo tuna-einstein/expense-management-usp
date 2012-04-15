@@ -86,7 +86,8 @@ public class JavaScriptObjects {
         public final native Double getAmount() /*-{ return this.amount; }-*/;
         public final native String getDate() /*-{ return this.date; }-*/;
         public final native String getKey() /*-{return this.key;}-*/;
-
+        public final native String getDescription() /*-{return this.description;}-*/;
+ 
         /**
          * Convert the string of JSON into JavaScript object array.
          */

@@ -62,6 +62,9 @@ public class Main implements EntryPoint {
 
     final DisplayTransactionsPanel dcPanelClaims = new DisplayTransactionsPanel(Type.CLAIM);
     final DisplayTransactionsPanel dcPanelDebts = new DisplayTransactionsPanel(Type.DEBT);
+
+    final DisplayTransactionsPanel dcPanelNetpays = new DisplayTransactionsPanel(Type.NET);
+    
     final TabPanel displayTransactionsTabs = new TabPanel();
 
     private void init() {
@@ -79,12 +82,14 @@ public class Main implements EntryPoint {
         displayTransactionsTabs.add(expenseForm, "Add Transaction");
         displayTransactionsTabs.add(dcPanelClaims, "Claims");
         displayTransactionsTabs.add(dcPanelDebts, "Debts");
+        displayTransactionsTabs.add(dcPanelNetpays, "Net-Payments");
+        
         
         
       //  displayTransactionsTabs.setWidth("50%");
       //  displayTransactionsTabs.setHeight("50%");
         displayTransactionsTabs.selectTab(0);
-        displayTransactionsTabs.setSize("500px", "250px");
+        displayTransactionsTabs.setSize("800px", "500px");
         displayTransactionsTabs.addStyleName("table-center");
         RootPanel.get("expense-display").add(hpanelForTransactionDisplay);
         RootPanel.get("project-name").add(projectName);
@@ -109,6 +114,7 @@ public class Main implements EntryPoint {
                     dcPanelClaims.setOwnerEmail(ownerEmail);
                     htmlLogout.setHTML("<a href=\"" + info.getLogoutUrl() + "\"> Logout </a>");
                     dcPanelDebts.setOwnerEmail(ownerEmail);
+                    dcPanelNetpays.setOwnerEmail(ownerEmail);
                     init();
                     expenseForm.init(ownerEmail);
 
@@ -213,6 +219,8 @@ class MyTabListener implements SelectionHandler<Integer> {
             service.getClaimsAsJson(dp.getOwnerEmail(), callback);
         } else if (dp.getType() == Type.DEBT) {
             service.getDebtsAsJson(dp.getOwnerEmail(), callback);
+        } else if (dp.getType() == Type.NET) {
+           service.getNetPaymentAsJson(dp.getOwnerEmail(), callback);
         }
     }
 

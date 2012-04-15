@@ -18,4 +18,6 @@ public interface ExpenseReportRetriever extends RemoteService {
 
     public String getDebtsAsJson(String email);
 
+    public String getNetPaymentAsJson(String loggedInUser);
+
 }

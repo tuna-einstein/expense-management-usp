@@ -1,6 +1,7 @@
 # Module main
 # RPC service class, partial path of RPC policy file
 com.usp.expmgmt.client.service.ExpenseReportSaver, EC2AA9F8A53FA781887DB59A9C21E895.gwt.rpc
+com.usp.expmgmt.client.service.ClearClaimsForX, AC5FC933B81B678339BDD7607C94EEA5.gwt.rpc
 com.usp.expmgmt.client.service.UserExpenseReportRetriever, 9F7D7EB4A1223F3FB148997358000BDD.gwt.rpc
 com.usp.expmgmt.client.service.LoggedInUserFetcher, 01DD7A4EC1301E5EE9E7EE917429F35E.gwt.rpc
 com.usp.expmgmt.client.service.ChangeLogRetriever, 6D540EC432EFA83BE5F44E1BFC833493.gwt.rpc

@@ -17,5 +17,7 @@ public interface ExpenseReportRetrieverAsync {
 
     void getDebtsAsJson(String email, AsyncCallback<String> callback);
 
+    void getNetPaymentAsJson(String loggedInUser, AsyncCallback<String> callback);
+
  
 }

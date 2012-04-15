@@ -13,6 +13,9 @@ public class UserExpenseReport {
     private double amount;
     @Expose
     private String key;
+    
+    @Expose
+    private String description;
     public String getDate() {
         return date;
     }
@@ -45,6 +48,13 @@ public class UserExpenseReport {
         userReport.setKey(KeyFactory.keyToString(report.getKey()));
         int index = report.getEmailList().indexOf(email);
         userReport.setAmount(report.getAmountList().get(index));
+        userReport.setDescription(report.getDescription());
         return userReport;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

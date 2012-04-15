@@ -49,7 +49,30 @@ public class UserMapperAmountReducer {
         }
         return result;
     }
- 
+
+    public static List<UserAndAmount> mapReducerForNetPayment(List<UserAndAmount> claims, List<UserAndAmount> debts) {
+        HashMap<String, Double> map = new HashMap<String, Double>();
+        for (UserAndAmount claim : claims) {
+            map.put(claim.getEmail(), claim.getAmount());
+        }
+        for (UserAndAmount debt : debts) {
+            if (map.containsKey(debt.getEmail())) {
+                map.put(debt.getEmail(), map.get(debt.getEmail()) - debt.getAmount());
+            } else {
+                map.put(debt.getEmail(), - debt.getAmount());
+           }
+        }
+        
+        ArrayList<UserAndAmount> result = new ArrayList<UserAndAmount>();
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            UserAndAmount userAndAmount = new UserAndAmount();
+             userAndAmount.setEmail(entry.getKey());
+             userAndAmount.setAmount(entry.getValue());
+            result.add(userAndAmount);
+        }
+        return result;
+    }
+
     private static void addForClaims(HashMap<String, Double> map, ExpenseReport report) {
         int count = 0;
         for (String email : report.getEmailList()) {

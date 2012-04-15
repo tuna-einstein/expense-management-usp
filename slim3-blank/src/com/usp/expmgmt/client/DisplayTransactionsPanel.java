@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.usp.expmgmt.client.service.ClearClaimsForX;
+import com.usp.expmgmt.client.service.ClearClaimsForXAsync;
 import com.usp.expmgmt.client.service.UserExpenseReportRetriever;
 import com.usp.expmgmt.client.service.UserExpenseReportRetrieverAsync;
 import com.usp.expmgmt.shared.jso.JavaScriptObjects.UserAndAmountJSO;
@@ -105,13 +107,44 @@ public class DisplayTransactionsPanel extends ScrollPanel {
         flexTable.insertRow(flexTable.getRowCount());
         flexTable.setWidget(flexTable.getRowCount() - 1, 0,
             new HTML(userAndAmount.getEmail()));
-        Anchor anchor = new Anchor("show");
-        anchor.setName(userAndAmount.getEmail());
-        anchor.addClickHandler(new AnchorClickHandler(anchor));
+        
+        Anchor anchorShow = new Anchor("Show");
+        
+        anchorShow.setName(userAndAmount.getEmail());
+        
+        anchorShow.addClickHandler(new AnchorClickHandler(anchorShow));
 
        flexTable.setText(flexTable.getRowCount() - 1, 1, String.valueOf(userAndAmount.getAmount()));
-       flexTable.setWidget(flexTable.getRowCount() - 1, 2, anchor);
+       if (type != Type.NET) {
+           flexTable.setWidget(flexTable.getRowCount() - 1, 2, anchorShow);
+       }
+       
+       if (type == Type.CLAIM) {
+           Anchor anchorClear = new Anchor("       Clear");
+           anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail()));
+           flexTable.setWidget(flexTable.getRowCount() - 1, 3, anchorClear);
+       }
+    }
+
+    private ClickHandler getClearAnchorClickHandler(final String userEmail) {
+       final ClearClaimsForXAsync service = GWT.create(ClearClaimsForX.class);
         
+        ClickHandler handler = new ClickHandler() {
+            
+            public void onClick(ClickEvent event) {
+                service.clearClaims(userEmail, new AsyncCallback<String>() {
+
+                    public void onFailure(Throwable caught) {
+                        Window.alert(caught.getMessage());
+                    }
+
+                    public void onSuccess(String result) {
+                        Window.alert(result);
+                    }
+                });
+            }
+        };
+        return handler;
     }
 
     private class AnchorClickHandler implements ClickHandler {
@@ -135,7 +168,13 @@ public class DisplayTransactionsPanel extends ScrollPanel {
 //                 anchor.getAbsoluteTop() + anchor.getOffsetHeight()
 //                 );
 //             pop.show();
-             reportList.init(json);
+             String header = "";
+             if (type == Type.CLAIM) {
+                 header = "Claims for " + ownerEmail;
+             } else if (type == Type.DEBT) {
+                 header = "Debts for " + ownerEmail;
+             }
+             reportList.init(json, header);
              removeAll();
              add(reportList);
          }

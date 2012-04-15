@@ -11,6 +11,7 @@ import org.slim3.util.BeanUtil;
 import org.slim3.util.CopyOptions;
 import org.slim3.util.RequestLocator;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.gdata.data.dublincore.Date;
@@ -32,7 +33,7 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         return report;
     }
     
-    private String getLoggedInUser() {
+    public static String getLoggedInUser() {
         HttpServletRequest request = RequestLocator.get();
         if (request.getUserPrincipal() != null) {
             String ownerEmail = request.getUserPrincipal().getName();
@@ -49,20 +50,13 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
        // BeanUtil.copy(input, report);
         ExpenseReport oldReport = Datastore.get(ExpenseReport.class, report.getKey());
         String change = diff(oldReport, report);
-        String logMessage = content.getLogMessage();
         
-        ChangeLogMessage msg = new ChangeLogMessage();
-        msg.setExpenseReportKey(KeyFactory.keyToString(report.getKey()));
-        msg.setChangeMessage(change);
-        msg.setLogMessage(logMessage);
-        
-        msg.setActorName(getLoggedInUser());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        msg.setDate(dateFormat.format(System.currentTimeMillis()));
+        ChangeLogMessage msg = getLogMessage(report.getKey(), content.getLogMessage(), change);
         
         Transaction tx = Datastore.beginTransaction();
         Datastore.put(report);
         tx.commit();
+        
         
         tx = Datastore.beginTransaction();
         Datastore.put(msg);
@@ -81,13 +75,30 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         }
         //gson.
        // BeanUtil.copy(input, report);
+        
+        
         Transaction tx = Datastore.beginTransaction();
         Datastore.delete(report.getKey());
         tx.commit();
         return "Delete Successful";
     }
     
-    private String diff(ExpenseReport oldCopy, ExpenseReport newCopy ) {
+    public static ChangeLogMessage getLogMessage(Key parentKey, String logMessage, String change) {
+        ChangeLogMessage msg = new ChangeLogMessage();
+        Key childKey = Datastore.allocateId(parentKey, ChangeLogMessage.class);
+        msg.setKey(childKey);
+        msg.setExpenseReportKey(KeyFactory.keyToString(parentKey));
+        msg.setChangeMessage(change);
+        msg.setLogMessage(logMessage);
+        
+        msg.setActorName(getLoggedInUser());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        msg.setDate(dateFormat.format(System.currentTimeMillis()));
+        
+       return msg;
+    }
+    
+    public static String diff(ExpenseReport oldCopy, ExpenseReport newCopy ) {
         String change = "";
         for (int i = 0; i < oldCopy.getAmountList().size(); i++) {
             Double oldAmount = oldCopy.getAmountList().get(i);
