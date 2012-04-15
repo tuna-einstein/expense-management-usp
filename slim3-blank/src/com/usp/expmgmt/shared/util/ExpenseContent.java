@@ -23,6 +23,9 @@ public class ExpenseContent {
     @Expose
     private String date;
     @Expose
+    private String logMessage;
+    
+    @Expose
     private List<String> emailList;
     @Expose
     private List<Double> amountList;
@@ -86,5 +89,11 @@ public class ExpenseContent {
     }
     public void setDate(String date) {
         this.date = date;
+    }
+    public String getLogMessage() {
+        return logMessage;
+    }
+    public void setLogMessage(String logMessage) {
+        this.logMessage = logMessage;
     }
 }

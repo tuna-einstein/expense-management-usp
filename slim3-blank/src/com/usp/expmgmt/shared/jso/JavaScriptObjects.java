@@ -7,6 +7,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 import com.google.gwt.core.client.JsArrayString;
+import com.usp.expmgmt.shared.model.ChangeLogMessage;
 import com.usp.expmgmt.shared.model.ExpenseReport;
 import com.usp.expmgmt.shared.util.ContactInfo;
 import com.usp.expmgmt.shared.util.ExpenseContent;
@@ -162,6 +163,36 @@ public class JavaScriptObjects {
         }
 
     }
+
+    /**
+     * {@link ChangeLogMessage}
+     */
     
+    public static class ChangeLogMessageJSO extends JavaScriptObject {                              // (1)
+        // Overlay types always have protected, zero argument constructors.
+        protected ChangeLogMessageJSO() {}                                              // (2)
+
+        // JSNI methods to get stock data.
+        public final native String getChangeMessage() /*-{ return this.changeMessage; }-*/;
+        public final native String getLogMessage() /*-{ return this.logMessage; }-*/;
+        public final native String getActorName() /*-{ return this.actorName; }-*/;
+        public final native String getDate() /*-{ return this.date; }-*/;
+
+        /**
+         * Convert the string of JSON into JavaScript object.
+         */
+        public static final native ChangeLogMessageJSO  asChangeLogMessageJSO (String json)
+        /*-{
+          return eval(json);
+        }-*/;
+        
+        /**
+         * Convert the string of JSON into JavaScript object array.
+         */
+        public static final native JsArray<ChangeLogMessageJSO> asArrayOfChangeLogMessageJSO(String json)
+        /*-{
+          return eval(json);
+        }-*/;
+    }
 }
 

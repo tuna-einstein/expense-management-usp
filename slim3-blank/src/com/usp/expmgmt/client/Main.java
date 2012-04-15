@@ -1,5 +1,7 @@
 package com.usp.expmgmt.client;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,6 +24,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -63,18 +66,26 @@ public class Main implements EntryPoint {
 
     private void init() {
         HorizontalPanel hpanelForTransactionDisplay = new HorizontalPanel();
+        hpanelForTransactionDisplay.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         projectName.setHTML("<h1> Expense Management</h1>");
         displayTransactionsTabs.addSelectionHandler(new MyTabListener(displayTransactionsTabs));
         hpanelForTransactionDisplay.add( displayTransactionsTabs);
         hpanelForTransactionDisplay.setWidth("100%");
-        hpanelForTransactionDisplay.add(expenseForm);
+       // hpanelForTransactionDisplay.add(expenseForm);
+        
         expenseForm.setOracle(oracle);
+        
         hpanelForTransactionDisplay.add(htmlLogout);
+        displayTransactionsTabs.add(expenseForm, "Add Transaction");
         displayTransactionsTabs.add(dcPanelClaims, "Claims");
         displayTransactionsTabs.add(dcPanelDebts, "Debts");
-        displayTransactionsTabs.setWidth("50%");
-        displayTransactionsTabs.setHeight("50%");
+        
+        
+      //  displayTransactionsTabs.setWidth("50%");
+      //  displayTransactionsTabs.setHeight("50%");
         displayTransactionsTabs.selectTab(0);
+        displayTransactionsTabs.setSize("500px", "250px");
+        displayTransactionsTabs.addStyleName("table-center");
         RootPanel.get("expense-display").add(hpanelForTransactionDisplay);
         RootPanel.get("project-name").add(projectName);
 
@@ -185,6 +196,10 @@ class MyTabListener implements SelectionHandler<Integer> {
     }
     public void onSelection(SelectionEvent<Integer> event) {
         // Window.alert(event.getSelectedItem().toString());
+        Widget wid = panel.getWidget(event.getSelectedItem());
+        if (!(wid instanceof DisplayTransactionsPanel)) {
+            return;
+        }
         final DisplayTransactionsPanel dp = (DisplayTransactionsPanel) panel.getWidget(event.getSelectedItem());
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             public void onFailure(Throwable caught) {

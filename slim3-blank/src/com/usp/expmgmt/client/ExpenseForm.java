@@ -6,8 +6,6 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -58,6 +56,7 @@ public class ExpenseForm extends FormPanel {
         // Autofill for logged in user
         verticalPanel.add(new Label("Owner Email: "));
         ownerEmail.setText(email);
+        ownerEmail.setReadOnly(true);
         
         verticalPanel.add(ownerEmail);
         
