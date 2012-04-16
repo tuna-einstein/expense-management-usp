@@ -51,19 +51,17 @@ public class ExpenseReportPopup extends PopupPanel{
                     }
 
                     public void onSuccess(String json) {
-                        thisPopup.hide(true);
+                       // thisPopup.hide(true);
                         ChangeLogsPopup pop = new ChangeLogsPopup();
                         pop.init(json);
                         pop.setAnimationEnabled(true);
                         pop.setPopupPosition(showLogAnchor.getAbsoluteLeft() + showLogAnchor.getOffsetWidth(), showLogAnchor.getAbsoluteTop() + showLogAnchor.getOffsetHeight());
-                        pop.center();
+                        pop.show();
                         
                        // Window.alert(json);
                     }
                 };
                 logRetriver.getChangeLogsAsJson(report.getEncodedKey(), callback);
-                // TODO Auto-generated method stub
-                
             }
         });
         

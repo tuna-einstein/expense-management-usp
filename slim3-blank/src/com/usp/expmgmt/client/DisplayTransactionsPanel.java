@@ -120,7 +120,7 @@ public class DisplayTransactionsPanel extends ScrollPanel {
        }
        
        if (type == Type.CLAIM) {
-           Anchor anchorClear = new Anchor("       Clear");
+           Anchor anchorClear = new Anchor("<pre>      Clear </pre>", true);
            anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail()));
            flexTable.setWidget(flexTable.getRowCount() - 1, 3, anchorClear);
        }
