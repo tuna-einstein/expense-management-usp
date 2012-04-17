@@ -56,9 +56,11 @@ public class Main implements EntryPoint {
     final ExpenseForm expenseForm = new ExpenseForm();
     int count = 0;
     final HTML htmlLogout = new HTML();
+    final Button logoutButton = new Button("Logout");
     final HTML projectName = new HTML();
     final Hyperlink refresh = new Hyperlink();
     private String ownerEmail;
+    private String logoutUrl;
 
     final DisplayTransactionsPanel dcPanelClaims = new DisplayTransactionsPanel(Type.CLAIM);
     final DisplayTransactionsPanel dcPanelDebts = new DisplayTransactionsPanel(Type.DEBT);
@@ -78,13 +80,12 @@ public class Main implements EntryPoint {
         
         expenseForm.setOracle(oracle);
         
-        hpanelForTransactionDisplay.add(htmlLogout);
+        hpanelForTransactionDisplay.add(logoutButton);
         displayTransactionsTabs.add(expenseForm, "Add Transaction");
         displayTransactionsTabs.add(dcPanelClaims, "Claims");
         displayTransactionsTabs.add(dcPanelDebts, "Debts");
         displayTransactionsTabs.add(dcPanelNetpays, "Net-Payments");
-        
-        
+        displayTransactionsTabs.add(new FeedbackForm(), "Feedback");
         
       //  displayTransactionsTabs.setWidth("50%");
       //  displayTransactionsTabs.setHeight("50%");
@@ -113,6 +114,7 @@ public class Main implements EntryPoint {
                     oracle.addAll(info.getContactList());
                     dcPanelClaims.setOwnerEmail(ownerEmail);
                     htmlLogout.setHTML("<a href=\"" + info.getLogoutUrl() + "\"> Logout </a>");
+                    logoutUrl = info.getLogoutUrl() ;
                     dcPanelDebts.setOwnerEmail(ownerEmail);
                     dcPanelNetpays.setOwnerEmail(ownerEmail);
                     init();
@@ -144,6 +146,14 @@ public class Main implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 form.submit();
+            }
+        });
+        
+        
+        logoutButton.addClickHandler(new ClickHandler() {
+            
+            public void onClick(ClickEvent event) {
+                Window.Location.replace(logoutUrl);
             }
         });
     }

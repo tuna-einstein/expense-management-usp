@@ -132,6 +132,10 @@ public class DisplayTransactionsPanel extends ScrollPanel {
         ClickHandler handler = new ClickHandler() {
             
             public void onClick(ClickEvent event) {
+                
+                if(!Window.confirm("Click Ok to clear all the claims for " + userEmail)){
+                    return;
+                }
                 service.clearClaims(userEmail, new AsyncCallback<String>() {
 
                     public void onFailure(Throwable caught) {

@@ -3,9 +3,14 @@ package com.usp.expmgmt.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -27,6 +32,7 @@ public class ExpenseReportPopup extends PopupPanel{
     private Grid grid ;
     private final TextArea logMessage = new TextArea();
     private final Anchor showLogAnchor = new Anchor("Show Logs");
+    private final ChangeLogsDisclosurePanel disPanel = new ChangeLogsDisclosurePanel();
     private final VerticalPanel vp = new VerticalPanel();
 
     public  ExpenseReportPopup () {
@@ -34,7 +40,35 @@ public class ExpenseReportPopup extends PopupPanel{
         logMessage.setVisibleLines(2);
         logMessage.setCharacterWidth(30);
         setShowLogHandler();
+        addClickHandlerToDisclosurePanel();
         this.add(vp);
+    }
+    
+    private void addClickHandlerToDisclosurePanel() {
+        final ChangeLogRetrieverAsync logRetriver = GWT.create(ChangeLogRetriever.class);
+        disPanel.getDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+            
+            public void onOpen(OpenEvent<DisclosurePanel> event) {
+                // TODO Auto-generated method stub
+                AsyncCallback<String> callback = new AsyncCallback<String>() {
+
+                    public void onFailure(Throwable caught) {
+                        Window.alert(caught.getMessage());
+                    }
+
+                    public void onSuccess(String json) {
+                        disPanel.init(json);                    }
+                };
+                logRetriver.getChangeLogsAsJson(report.getEncodedKey(), callback);
+            }
+        });
+        
+        disPanel.getDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
+            
+            public void onClose(CloseEvent<DisclosurePanel> event) {
+               // disPanel.getDisclosurePanel().setHeader(new HTML("Show Change logs"));
+                }
+        });
     }
 
     private void setShowLogHandler() {
@@ -51,12 +85,14 @@ public class ExpenseReportPopup extends PopupPanel{
                     }
 
                     public void onSuccess(String json) {
-                       // thisPopup.hide(true);
+                       
                         ChangeLogsPopup pop = new ChangeLogsPopup();
                         pop.init(json);
                         pop.setAnimationEnabled(true);
                         pop.setPopupPosition(showLogAnchor.getAbsoluteLeft() + showLogAnchor.getOffsetWidth(), showLogAnchor.getAbsoluteTop() + showLogAnchor.getOffsetHeight());
                         pop.show();
+                        
+                         
                         
                        // Window.alert(json);
                     }
@@ -133,7 +169,8 @@ public class ExpenseReportPopup extends PopupPanel{
          grid.setWidget(report.getEmailList().length() + 1, 1, getAnchor("Save"));
     grid.getCellFormatter().setAlignment(report.getEmailList().length() + 1, 1, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_MIDDLE);
     vp.add(grid);
-    vp.add(showLogAnchor);
+   // vp.add(showLogAnchor);
+    vp.add(disPanel.getDisclosurePanel());
     }
     
     private void addToGrid(String email, Double amount, int row) {
@@ -184,6 +221,10 @@ public class ExpenseReportPopup extends PopupPanel{
             if (uiObject.getName().equals("Save")) {
             service.save(popup.getJson(), callback);
             } else if (uiObject.getName().equals("Delete")) {
+                if(!Window.confirm("Click ok to delete the Transaction")){
+                    return;
+                }
+                
                 service.delete(popup.getJson(), callback);
                 popup.removeFromParent();
             } 

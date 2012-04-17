@@ -53,6 +53,20 @@ public class ExpenseForm extends FormPanel {
         descriptionText.setName("description");
     }
 
+    private void distributeTotal() {
+        Double tamount= 0.0;
+        try {
+        tamount = Double.valueOf(totalAmount.getText());
+        tamount = tamount / amountBoxList.size();
+        } catch (Exception e) {
+            
+        }
+        
+        for (TextBox box : amountBoxList) {
+            box.setText(tamount.toString());
+        }
+    }
+
     /**
      * arranges the components on the form
      */
@@ -72,34 +86,16 @@ public class ExpenseForm extends FormPanel {
         verticalPanel.add(new Label("Date: "));
         verticalPanel.add(dateBox);
         
-        verticalPanel.add(new Label("Total Amount"));
         HorizontalPanel hpForTotal = new HorizontalPanel();
+        hpForTotal.add(new Label("Total Amount"));
         hpForTotal.add(totalAmount);
-        Anchor distributeAnchor = new Anchor("Distribute");
-        hpForTotal.add(distributeAnchor);
+        
         verticalPanel.add(hpForTotal);
         
         HorizontalPanel hp = new HorizontalPanel();
         hp.add(new HTML("<b>Email....................."));
         hp.add(new HTML("<b>Amount"));
         verticalPanel.add(hp);
-        
-        distributeAnchor.addClickHandler(new ClickHandler() {
-            
-            public void onClick(ClickEvent event) {
-                Double tamount= 0.0;
-                try {
-                tamount = Double.valueOf(totalAmount.getText());
-                tamount = tamount / amountBoxList.size();
-                } catch (Exception e) {
-                    
-                }
-                
-                for (TextBox box : amountBoxList) {
-                    box.setText(tamount.toString());
-                }
-            }
-        });
         
         // Add textbox for email and Amount
          verticalPanel.add(anchor);
@@ -116,6 +112,8 @@ public class ExpenseForm extends FormPanel {
                  verticalPanel.add(getEmailAndAmount());
                  verticalPanel.add(anchor);
                  verticalPanel.add(button);
+                 
+                 distributeTotal();
              }
          });
          button.addClickHandler(new ClickHandler() {
@@ -126,6 +124,12 @@ public class ExpenseForm extends FormPanel {
 
          addFormHandler(new FormHandler() {
             
+             private native boolean isValidEmail(String email) /*-{ 
+             var reg1 = /(@.*@)|(\.\.)|(@\.)|(\.@)|(^\.)/; // not valid 
+             var reg2 = /^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$/; // valid 
+             return !reg1.test(email) && reg2.test(email); 
+     }-*/; 
+             
             public void onSubmitComplete(FormSubmitCompleteEvent event) {
                 
                 descriptionText.setText("");
@@ -144,7 +148,23 @@ public class ExpenseForm extends FormPanel {
                        int begin = str.indexOf("<");
                        int end = str.indexOf(">");
                        str = str.substring(begin + 1, end);
-                       box.setText(str);
+                       
+                   }
+                   if (isValidEmail(str)) {
+                   box.setText(str);
+                   } else {
+                       Window.alert("Invalid email:" + str);
+                       event.setCancelled(true);
+                   }
+               }
+               
+               // Check amount boxes
+               for (TextBox box : amountBoxList) {
+                   try {
+                       Double.valueOf(box.getText());
+                   } catch (Exception e) {
+                       Window.alert("Invalid amount:" + box.getText());
+                       event.setCancelled(true);
                    }
                }
                  // TODO Auto-generated method stub
@@ -159,9 +179,9 @@ public class ExpenseForm extends FormPanel {
         this.oracle = oracle;
     }
     private HorizontalPanel getEmailAndAmount() {
-        SuggestBox box = new SuggestBox(oracle);
+        final SuggestBox box = new SuggestBox(oracle);
         textBoxList.add(box);
-        TextBox amount = new TextBox();
+        final TextBox amount = new TextBox();
         box.getTextBox().setName(EMAIL);
         box.getTextBox().setText("");
         amount.setName(AMOUNT);
@@ -180,6 +200,11 @@ public class ExpenseForm extends FormPanel {
             
             public void onClick(ClickEvent event) {
                 hp.removeFromParent();
+                
+                textBoxList.remove(box);
+                amountBoxList.remove(amount);
+                
+                distributeTotal();
             }
         });
         
