@@ -45,10 +45,12 @@ public class ExpenseForm extends FormPanel {
         this.dateBox = new DateBox();
         this.ownerEmail = new TextBox();
         this.ownerEmail.setName("ownerEmail");
+        this.ownerEmail.setVisibleLength(35);
         dateBox.setValue(new Date());
         dateBox.getTextBox().setName("date");
+        dateBox.getTextBox().setVisibleLength(30);
         this.descriptionText = new TextArea();
-        descriptionText.setCharacterWidth(40);
+        descriptionText.setCharacterWidth(80);
         descriptionText.setVisibleLines(4);
         descriptionText.setName("description");
     }
@@ -72,30 +74,31 @@ public class ExpenseForm extends FormPanel {
      */
     public ExpenseForm init(String email) {
         // Autofill for logged in user
-        verticalPanel.add(new Label("Owner Email: "));
         ownerEmail.setText(email);
         ownerEmail.setReadOnly(true);
         
-        verticalPanel.add(ownerEmail);
-        
-        // Add expense description
-        verticalPanel.add(new Label("Expense Description: "));
-        verticalPanel.add(descriptionText);
-        
-        // Add date of expense
-        verticalPanel.add(new Label("Date: "));
-        verticalPanel.add(dateBox);
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.setWidth("800px");
+        hp.add(ownerEmail);
         
         HorizontalPanel hpForTotal = new HorizontalPanel();
         hpForTotal.add(new Label("Total Amount"));
         hpForTotal.add(totalAmount);
         
-        verticalPanel.add(hpForTotal);
-        
-        HorizontalPanel hp = new HorizontalPanel();
-        hp.add(new HTML("<b>Email....................."));
-        hp.add(new HTML("<b>Amount"));
+        hp.add(hpForTotal);
+        hp.add(dateBox);
         verticalPanel.add(hp);
+        
+        
+        
+        // Add expense description
+        verticalPanel.add(new Label("Expense Description: "));
+        verticalPanel.add(descriptionText);
+        
+        HorizontalPanel hp1 = new HorizontalPanel();
+        hp1.add(new HTML("<b>Email....................."));
+        hp1.add(new HTML("<b>Amount"));
+        verticalPanel.add(hp1);
         
         // Add textbox for email and Amount
          verticalPanel.add(anchor);
@@ -111,7 +114,9 @@ public class ExpenseForm extends FormPanel {
              public void onClick(ClickEvent event) {
                  verticalPanel.add(getEmailAndAmount());
                  verticalPanel.add(anchor);
+                 verticalPanel.add(new HTML(" "));
                  verticalPanel.add(button);
+                 
                  
                  distributeTotal();
              }

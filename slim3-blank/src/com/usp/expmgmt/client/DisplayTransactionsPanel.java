@@ -120,7 +120,7 @@ public class DisplayTransactionsPanel extends ScrollPanel {
        }
        
        if (type == Type.CLAIM) {
-           Anchor anchorClear = new Anchor("<pre>      Clear </pre>", true);
+           Anchor anchorClear = new Anchor("<pre>  <b>Clear </pre>", true);
            anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail()));
            flexTable.setWidget(flexTable.getRowCount() - 1, 3, anchorClear);
        }
@@ -174,9 +174,9 @@ public class DisplayTransactionsPanel extends ScrollPanel {
 //             pop.show();
              String header = "";
              if (type == Type.CLAIM) {
-                 header = "Claims for " + ownerEmail;
+                 header = "Claims for " + anchor.getName();
              } else if (type == Type.DEBT) {
-                 header = "Debts for " + ownerEmail;
+                 header = "Debts for " + anchor.getName();
              }
              reportList.init(json, header);
              removeAll();
