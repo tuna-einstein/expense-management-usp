@@ -2,6 +2,7 @@ package com.usp.expmgmt.client;
 
 import org.hamcrest.core.IsInstanceOf;
 
+import com.gargoylesoftware.htmlunit.javascript.host.Document;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -58,6 +59,7 @@ public class Main implements EntryPoint {
     final HTML htmlLogout = new HTML();
     final Button logoutButton = new Button("Logout");
     final HTML projectName = new HTML();
+    
     final Hyperlink refresh = new Hyperlink();
     private String ownerEmail;
     private String logoutUrl;
@@ -91,9 +93,11 @@ public class Main implements EntryPoint {
       //  displayTransactionsTabs.setHeight("50%");
         displayTransactionsTabs.selectTab(0);
         displayTransactionsTabs.setSize("800px", "500px");
+        displayTransactionsTabs.setHeight("500px");
         displayTransactionsTabs.addStyleName("table-center");
         RootPanel.get("expense-display").add(hpanelForTransactionDisplay);
         RootPanel.get("project-name").add(projectName);
+        RootPanel.get("loggedin_user_name").add(new HTML("<h2>" + ownerEmail + "</h2>"));
 
 
     }
@@ -104,7 +108,7 @@ public class Main implements EntryPoint {
         ownerEmailfetcher.getOwnerEmail( new AsyncCallback<String>() {
 
             public void onFailure(Throwable caught) {
-                Window.alert(caught.toString());
+                Window.Location.replace("/logoutURL");
 
             }
             public void onSuccess(String result) {

@@ -22,6 +22,9 @@ public class UserMapperAmountReducer {
 
         ArrayList<UserAndAmount> result = new ArrayList<UserAndAmount>();
         for (Map.Entry<String, Double> entry : map.entrySet()) {
+            if(Math.abs(entry.getValue()) < 0.00001) {
+                continue;
+            }
             UserAndAmount userAndAmount = new UserAndAmount();
              userAndAmount.setEmail(entry.getKey());
              userAndAmount.setAmount(entry.getValue());
@@ -42,6 +45,11 @@ public class UserMapperAmountReducer {
 
         ArrayList<UserAndAmount> result = new ArrayList<UserAndAmount>();
         for (Map.Entry<String, Double> entry : map.entrySet()) {
+            
+            if(Math.abs(entry.getValue()) < 0.00001) {
+                continue;
+            }
+
             UserAndAmount userAndAmount = new UserAndAmount();
              userAndAmount.setEmail(entry.getKey());
              userAndAmount.setAmount(entry.getValue());
@@ -65,6 +73,11 @@ public class UserMapperAmountReducer {
         
         ArrayList<UserAndAmount> result = new ArrayList<UserAndAmount>();
         for (Map.Entry<String, Double> entry : map.entrySet()) {
+            
+            if(Math.abs(entry.getValue()) < 0.00001) {
+                continue;
+            }
+            
             UserAndAmount userAndAmount = new UserAndAmount();
              userAndAmount.setEmail(entry.getKey());
              userAndAmount.setAmount(entry.getValue());

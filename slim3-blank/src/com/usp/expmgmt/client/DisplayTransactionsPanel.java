@@ -1,7 +1,5 @@
 package com.usp.expmgmt.client;
 
-import net.sourceforge.htmlunit.corejs.javascript.ast.DoLoop;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -9,8 +7,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.usp.expmgmt.client.service.ClearClaimsForX;
 import com.usp.expmgmt.client.service.ClearClaimsForXAsync;
@@ -29,6 +29,9 @@ public class DisplayTransactionsPanel extends ScrollPanel {
     private final DisplayUserExpenseReportList reportList = new DisplayUserExpenseReportList();
     public DisplayTransactionsPanel(Type type ) {
         this.type = type;
+        flexTable.setCellSpacing(5);
+        flexTable.setCellPadding(2);
+        addClickHandler() ;
     }
 
     private void removeAll() {
@@ -108,59 +111,99 @@ public class DisplayTransactionsPanel extends ScrollPanel {
         flexTable.setWidget(flexTable.getRowCount() - 1, 0,
             new HTML(userAndAmount.getEmail()));
         
-        Anchor anchorShow = new Anchor("Show");
+        Button showTab = new Button("Show");
+        if (type == Type.CLAIM) {
+            showTab.setTitle("Show All Claim in Detail");
+        }else if (type == Type.DEBT) {
+            showTab.setTitle("Show All Debts in Detail");
+        }
         
-        anchorShow.setName(userAndAmount.getEmail());
+      
         
-        anchorShow.addClickHandler(new AnchorClickHandler(anchorShow));
+        showTab.addClickHandler(new ShowClickHandler(userAndAmount.getEmail()));
 
        flexTable.setText(flexTable.getRowCount() - 1, 1, String.valueOf(userAndAmount.getAmount()));
        if (type != Type.NET) {
-           flexTable.setWidget(flexTable.getRowCount() - 1, 2, anchorShow);
+           flexTable.setWidget(flexTable.getRowCount() - 1, 2, showTab);
        }
        
        if (type == Type.CLAIM) {
-           Anchor anchorClear = new Anchor("<pre>  <b>Clear </pre>", true);
-           anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail()));
+           Anchor anchorClear = new Anchor("Clear", true);
+           anchorClear.setTitle("Resets amount to 0");
+           anchorClear.setName(userAndAmount.getEmail());
+        //   anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail(), anchorClear));
            flexTable.setWidget(flexTable.getRowCount() - 1, 3, anchorClear);
+           
        }
     }
 
-    private ClickHandler getClearAnchorClickHandler(final String userEmail) {
-       final ClearClaimsForXAsync service = GWT.create(ClearClaimsForX.class);
-        
-        ClickHandler handler = new ClickHandler() {
-            
+//    private ClickHandler getClearAnchorClickHandler(final String userEmail, final Anchor anchor) {
+//       final ClearClaimsForXAsync service = GWT.create(ClearClaimsForX.class);
+//        
+//        ClickHandler handler = new ClickHandler() {
+//            
+//            public void onClick(ClickEvent event) {
+//               
+//                if(!Window.confirm("Click Ok to clear all the claims for " + userEmail)){
+//                    return;
+//                }
+//                service.clearClaims(userEmail, new AsyncCallback<String>() {
+//
+//                    public void onFailure(Throwable caught) {
+//                        Window.alert(caught.getMessage());
+//                    }
+//
+//                    public void onSuccess(String result) {
+//                        Window.alert(result);
+//                        anchor.removeFromParent();
+//                    }
+//                });
+//            }
+//        };
+//        return handler;
+//    }
+    
+    private void addClickHandler() {
+        flexTable.addClickHandler(new ClickHandler() {
+            private  UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
             public void onClick(ClickEvent event) {
-                
+                Cell cell = flexTable.getCellForEvent(event);
+                int col = cell.getCellIndex();
+                final int row = cell.getRowIndex();
+
+                // clear anchor index
+                if (col != 3) {
+                    return;
+                }
+                Anchor anchor = (Anchor)  flexTable.getWidget(row, col);
+                String userEmail = anchor.getName();
+                final ClearClaimsForXAsync service = GWT.create(ClearClaimsForX.class);
                 if(!Window.confirm("Click Ok to clear all the claims for " + userEmail)){
                     return;
                 }
                 service.clearClaims(userEmail, new AsyncCallback<String>() {
-
                     public void onFailure(Throwable caught) {
                         Window.alert(caught.getMessage());
                     }
-
                     public void onSuccess(String result) {
                         Window.alert(result);
+                        flexTable.removeRow(row);
                     }
                 });
             }
-        };
-        return handler;
+        });       
     }
 
-    private class AnchorClickHandler implements ClickHandler {
-        Anchor anchor;
-        AnchorClickHandler(Anchor anchor) {
-            this.anchor = anchor;
+    private class ShowClickHandler implements ClickHandler {
+        String userEmail;
+        ShowClickHandler(String userEmail) {
+            this.userEmail = userEmail;
         }
      private final UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
 
      AsyncCallback<String> callback =  new AsyncCallback<String>() {
          public void onFailure(Throwable caught) {
-             Window.alert(caught.getMessage());
+             Window.Location.replace("/logoutURL");
          }
 
          public void onSuccess(String json) {
@@ -174,9 +217,9 @@ public class DisplayTransactionsPanel extends ScrollPanel {
 //             pop.show();
              String header = "";
              if (type == Type.CLAIM) {
-                 header = "Claims for " + anchor.getName();
+                 header = "Claims for " + userEmail;
              } else if (type == Type.DEBT) {
-                 header = "Debts for " + anchor.getName();
+                 header = "Debts for " + userEmail;
              }
              reportList.init(json, header);
              removeAll();
@@ -187,9 +230,9 @@ public class DisplayTransactionsPanel extends ScrollPanel {
     
         public void onClick(ClickEvent event) {
             if (type == Type.CLAIM) {
-                service.getUserExpenseReportsAsJson(ownerEmail, anchor.getName(), callback);
+                service.getUserExpenseReportsAsJson(ownerEmail, userEmail, callback);
             } else if (type == Type.DEBT) {
-                service.getUserExpenseReportsAsJson(anchor.getName(), ownerEmail, callback);
+                service.getUserExpenseReportsAsJson(userEmail, ownerEmail, callback);
             }
         }
     }

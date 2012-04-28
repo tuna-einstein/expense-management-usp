@@ -6,6 +6,10 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -39,7 +43,9 @@ public class ExpenseForm extends FormPanel {
     
     public ExpenseForm() {
         this.anchor = new Anchor("Add More");
+        anchor.setTitle("Add a person");
         this.verticalPanel = new VerticalPanel();
+        this.verticalPanel.setSpacing(8);
         this.oracle = new MultiWordSuggestOracle();
         this.button = new Button("Submit");
         this.dateBox = new DateBox();
@@ -50,8 +56,8 @@ public class ExpenseForm extends FormPanel {
         dateBox.getTextBox().setName("date");
         dateBox.getTextBox().setVisibleLength(30);
         this.descriptionText = new TextArea();
-        descriptionText.setCharacterWidth(80);
-        descriptionText.setVisibleLines(4);
+        descriptionText.setCharacterWidth(100);
+        descriptionText.setVisibleLines(1);
         descriptionText.setName("description");
     }
 
@@ -79,24 +85,26 @@ public class ExpenseForm extends FormPanel {
         
         HorizontalPanel hp = new HorizontalPanel();
         hp.setWidth("800px");
-        hp.add(ownerEmail);
+        hp.add(dateBox);
         
         HorizontalPanel hpForTotal = new HorizontalPanel();
-        hpForTotal.add(new Label("Total Amount"));
+        hpForTotal.add(new HTML("<b>Total Amount: "));
         hpForTotal.add(totalAmount);
         
         hp.add(hpForTotal);
-        hp.add(dateBox);
+       
+      hp.add(ownerEmail);
+      ownerEmail.setVisible(false);
         verticalPanel.add(hp);
         
         
         
         // Add expense description
-        verticalPanel.add(new Label("Expense Description: "));
+        verticalPanel.add(new HTML("<b>Expense Description: "));
         verticalPanel.add(descriptionText);
         
         HorizontalPanel hp1 = new HorizontalPanel();
-        hp1.add(new HTML("<b>Email....................."));
+        hp1.add(new HTML("<b>Email........................................."));
         hp1.add(new HTML("<b>Amount"));
         verticalPanel.add(hp1);
         
@@ -146,6 +154,20 @@ public class ExpenseForm extends FormPanel {
                 init(ownerEmail.getText());
             }
             
+            private boolean checkDuplicacy() {
+                int length = textBoxList.size();
+                for (int i = 0; i < length ; i++ ) {
+                    String parent = textBoxList.get(i).getText();
+                    for (int j= i + 1; j< length ; j++) {
+                        if (parent.equals(textBoxList.get(j).getText())) {
+                          Window.alert("Duplicates :" + parent);
+                          return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            
             public void onSubmit(FormSubmitEvent event) {
                for (SuggestBox box : textBoxList) {
                    String str = box.getText();
@@ -172,6 +194,15 @@ public class ExpenseForm extends FormPanel {
                        event.setCancelled(true);
                    }
                }
+               
+               if(descriptionText.getText().length() > 100) {
+                   Window.alert("Description length can't be more than 100 characters");
+                   event.setCancelled(true);
+               }
+               
+               if (checkDuplicacy()) {
+                   event.setCancelled(true);
+               }
                  // TODO Auto-generated method stub
                 
             }
@@ -185,7 +216,9 @@ public class ExpenseForm extends FormPanel {
     }
     private HorizontalPanel getEmailAndAmount() {
         final SuggestBox box = new SuggestBox(oracle);
-        textBoxList.add(box);
+              textBoxList.add(box);
+              box.setWidth("200px");
+              
         final TextBox amount = new TextBox();
         box.getTextBox().setName(EMAIL);
         box.getTextBox().setText("");
@@ -198,7 +231,8 @@ public class ExpenseForm extends FormPanel {
         hp.add(amount);
         
         
-       Anchor remove = new Anchor( "Remove");
+       Anchor remove = new Anchor(" Remove");
+       remove.setTitle("Remove");
        
         hp.add(remove);
         remove.addClickHandler(new ClickHandler() {

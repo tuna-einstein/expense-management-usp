@@ -117,7 +117,9 @@ public class LoginController extends Controller {
         HttpServletRequest request = RequestLocator.get();
         if (request.getUserPrincipal() != null) {
             String ownerEmail = request.getUserPrincipal().getName();
+            if (ownerEmail.contains("@")) {
             return ownerEmail;
+            }
         }
         return null;
     }
