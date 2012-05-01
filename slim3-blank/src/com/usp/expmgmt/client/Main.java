@@ -70,6 +70,12 @@ public class Main implements EntryPoint {
     final DisplayTransactionsPanel dcPanelNetpays = new DisplayTransactionsPanel(Type.NET);
     
     final TabPanel displayTransactionsTabs = new TabPanel();
+    
+    private HTML getHelpContent() {
+        HTML html = new HTML();
+        html.setHTML("<iframe WIDTH=800 HEIGHT=1200 src=\"https://docs.google.com/document/pub?id=1Yiz-EKi16-9zzxzlOWJiIvB6Qwc7UjdgKIQz2AnMfi4&amp;embedded=true\"></iframe>"); 
+        return html;
+    }
 
     private void init() {
         HorizontalPanel hpanelForTransactionDisplay = new HorizontalPanel();
@@ -88,6 +94,10 @@ public class Main implements EntryPoint {
         displayTransactionsTabs.add(dcPanelDebts, "Debts");
         displayTransactionsTabs.add(dcPanelNetpays, "Net-Payments");
         displayTransactionsTabs.add(new FeedbackForm(), "Feedback");
+
+        displayTransactionsTabs.add(getHelpContent(), "Help and Contacts");
+        
+      
         
       //  displayTransactionsTabs.setWidth("50%");
       //  displayTransactionsTabs.setHeight("50%");
