@@ -57,7 +57,27 @@ public class LoggedInUserFetcherImpl implements LoggedInUserFetcher {
         Gson gson = gsonBuilder.create();
         return "(" + gson.toJson(info) +")";
     }
+    
+    public String getLoggedInUserEmail() {
+        HttpServletRequest request = RequestLocator.get();
+        LogInInfo info = new LogInInfo();
+        UserService userService = UserServiceFactory.getUserService();
+        GoogleLoginInfo googleLoginInfo = (GoogleLoginInfo) request.getSession().getAttribute(
+            "GoogleLoginInfo");
+        if (googleLoginInfo == null) {
+            info.setLoginUrl(userService.createLoginURL("/login"));
+        } else {
 
+            info.setEmail(googleLoginInfo.getOwnerEmail());
+            info.setLogoutUrl(userService.createLogoutURL("/login"));
+        }
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.excludeFieldsWithoutExposeAnnotation();
+        Gson gson = gsonBuilder.create();
+        return "(" + gson.toJson(info) +")";
+    }
+    
     private List<ContactInfo> getContacts(String accessToken, String accessTokenSecret) {
 
         // Now that we have all the OAuth parameters we need, we can

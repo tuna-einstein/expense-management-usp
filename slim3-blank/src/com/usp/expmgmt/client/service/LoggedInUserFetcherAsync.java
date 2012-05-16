@@ -6,4 +6,6 @@ public interface LoggedInUserFetcherAsync {
 
     public void getOwnerEmail(AsyncCallback<String> callback);
 
+    public void getLoggedInUserEmail(AsyncCallback<String> callback);
+
 }

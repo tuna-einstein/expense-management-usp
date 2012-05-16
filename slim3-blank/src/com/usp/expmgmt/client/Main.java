@@ -112,10 +112,11 @@ public class Main implements EntryPoint {
 
     }
     public void onModuleLoad() {
+       
         projectName.setHTML("<h1>Loading.....</h1>");
         RootPanel.get("project-name").add(projectName);
         LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
-        ownerEmailfetcher.getOwnerEmail( new AsyncCallback<String>() {
+        ownerEmailfetcher.getLoggedInUserEmail( new AsyncCallback<String>() {
 
             public void onFailure(Throwable caught) {
                 Window.Location.replace("/logoutURL");
@@ -125,7 +126,7 @@ public class Main implements EntryPoint {
                 LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
                 if (info.getLoginUrl().equals("")) {
                     ownerEmail = info.getEmail();
-                    oracle.addAll(info.getContactList());
+                    //oracle.addAll(info.getContactList());
                     dcPanelClaims.setOwnerEmail(ownerEmail);
                     htmlLogout.setHTML("<a href=\"" + info.getLogoutUrl() + "\"> Logout </a>");
                     logoutUrl = info.getLogoutUrl() ;
@@ -133,13 +134,17 @@ public class Main implements EntryPoint {
                     dcPanelNetpays.setOwnerEmail(ownerEmail);
                     init();
                     expenseForm.init(ownerEmail);
-
+                    getContacts();
 
                 } else {
                     Window.open(info.getLoginUrl(),  "_self", "");
                 }
             }
         });
+        
+      
+        
+        
 
         //fetchDataFromServer();
 
@@ -168,6 +173,26 @@ public class Main implements EntryPoint {
             
             public void onClick(ClickEvent event) {
                 Window.Location.replace(logoutUrl);
+            }
+        });
+    }
+    
+    private void getContacts() {
+        LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
+        ownerEmailfetcher.getOwnerEmail(new AsyncCallback<String>() {
+
+            public void onFailure(Throwable caught) {
+                Window.Location.replace("/logoutURL");
+            }
+
+            public void onSuccess(String result) {
+                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
+                if (info.getLoginUrl().equals("")) {
+                    oracle.addAll(info.getContactList());
+                    expenseForm.setOracle(oracle);
+                } else {
+                    Window.open(info.getLoginUrl(),  "_self", "");
+                }
             }
         });
     }

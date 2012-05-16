@@ -8,4 +8,6 @@ public interface LoggedInUserFetcher extends RemoteService {
 
     public String getOwnerEmail();
 
+    public String getLoggedInUserEmail();
+
 }
