@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
@@ -40,9 +46,10 @@ public class ExpenseForm extends FormPanel {
     private final List<SuggestBox> textBoxList = new ArrayList();
     private final List<TextBox> amountBoxList = new ArrayList();
     private final TextBox totalAmount = new TextBox();
+    final Anchor addMoreDetails = new Anchor("Add More Details to this Expense and Submit");
     
     public ExpenseForm() {
-        this.anchor = new Anchor("Add More");
+        this.anchor = new Anchor("Add More People to this expense");
         anchor.setTitle("Add a person");
         this.verticalPanel = new VerticalPanel();
         this.verticalPanel.setSpacing(8);
@@ -78,7 +85,7 @@ public class ExpenseForm extends FormPanel {
     /**
      * arranges the components on the form
      */
-    public ExpenseForm init(String email) {
+    public ExpenseForm init(final String email) {
         // Autofill for logged in user
         ownerEmail.setText(email);
         ownerEmail.setReadOnly(true);
@@ -92,6 +99,16 @@ public class ExpenseForm extends FormPanel {
         hpForTotal.add(totalAmount);
         
         hp.add(hpForTotal);
+        
+        
+        
+        totalAmount.addKeyUpHandler(new KeyUpHandler() {
+            
+            public void onKeyUp(KeyUpEvent event) {
+                distributeTotal();
+                
+            }
+        });
        
       hp.add(ownerEmail);
       ownerEmail.setVisible(false);
@@ -103,14 +120,24 @@ public class ExpenseForm extends FormPanel {
         verticalPanel.add(new HTML("<b>Expense Description: "));
         verticalPanel.add(descriptionText);
         
-        HorizontalPanel hp1 = new HorizontalPanel();
-        hp1.add(new HTML("<b>Email........................................."));
-        hp1.add(new HTML("<b>Amount"));
-        verticalPanel.add(hp1);
         
-        // Add textbox for email and Amount
-         verticalPanel.add(anchor);
-         verticalPanel.add(button);
+        verticalPanel.add(addMoreDetails);
+        addMoreDetails.addClickHandler(new ClickHandler() {
+            
+            public void onClick(ClickEvent event) {
+                addMoreDetails.setVisible(false);
+                verticalPanel.add(getEmailAndAmount(email));
+                verticalPanel.add(anchor);
+                verticalPanel.add(new HTML(" "));
+                verticalPanel.add(button);
+                
+                
+                distributeTotal();
+                
+            }
+        });
+        
+             
          
          // add the verticalPanel to form
          this.setWidget(verticalPanel);
@@ -120,7 +147,7 @@ public class ExpenseForm extends FormPanel {
          
          anchor.addClickHandler(new ClickHandler() {
              public void onClick(ClickEvent event) {
-                 verticalPanel.add(getEmailAndAmount());
+                 verticalPanel.add(getEmailAndAmount(""));
                  verticalPanel.add(anchor);
                  verticalPanel.add(new HTML(" "));
                  verticalPanel.add(button);
@@ -214,20 +241,21 @@ public class ExpenseForm extends FormPanel {
     public void setOracle(MultiWordSuggestOracle oracle) {
         this.oracle = oracle;
     }
-    private HorizontalPanel getEmailAndAmount() {
+    private HorizontalPanel getEmailAndAmount(String userEmail) {
         final SuggestBox box = new SuggestBox(oracle);
               textBoxList.add(box);
               box.setWidth("200px");
               
         final TextBox amount = new TextBox();
         box.getTextBox().setName(EMAIL);
-        box.getTextBox().setText("");
+        box.getTextBox().setText(userEmail);
         amount.setName(AMOUNT);
         amount.setText("0.00");
         amountBoxList.add(amount);
         
         final HorizontalPanel hp = new HorizontalPanel();
         hp.add(box);
+        hp.setSpacing(5);
         hp.add(amount);
         
         
@@ -244,6 +272,11 @@ public class ExpenseForm extends FormPanel {
                 amountBoxList.remove(amount);
                 
                 distributeTotal();
+                if (amountBoxList.isEmpty()) {
+                    addMoreDetails.setVisible(true);
+                    anchor.removeFromParent();
+                    button.removeFromParent();
+                }
             }
         });
         

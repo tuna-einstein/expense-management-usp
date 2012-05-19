@@ -32,7 +32,6 @@ public class LoginController extends Controller {
     public Navigation run() throws Exception {
         HttpServletRequest request = RequestLocator.get();
         HttpServletResponse response = ResponseLocator.get();
-        ServletContext servletContext = ServletContextLocator.get();
         String ownerEmail = getOwnerEmail();
         if (ownerEmail == null) {
             UserService userService = UserServiceFactory.getUserService();
@@ -46,7 +45,7 @@ public class LoginController extends Controller {
         
         if (!list.isEmpty()) {
             request.getSession().setAttribute("GoogleLoginInfo", list.get(0));
-            return forward("/");
+            return forward("/login.html");
         }
         
         request.getSession().setAttribute("ownerEmail", ownerEmail);

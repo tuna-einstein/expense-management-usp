@@ -42,14 +42,13 @@ public class LoggedInUserFetcherImpl implements LoggedInUserFetcher {
         GoogleLoginInfo googleLoginInfo = (GoogleLoginInfo) request.getSession().getAttribute(
             "GoogleLoginInfo");
         if (googleLoginInfo == null) {
-            info.setLoginUrl(userService.createLoginURL("/login"));
+            info.setLoginUrl(userService.createLoginURL("/login.html"));
         } else {
 
             info.setEmail(googleLoginInfo.getOwnerEmail());
 
             info.setContacts(getContacts(googleLoginInfo.getAccessToken(),
                 googleLoginInfo.getAccessTokenSecrete()));
-            info.setLogoutUrl(userService.createLogoutURL("/login"));
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -69,7 +68,7 @@ public class LoggedInUserFetcherImpl implements LoggedInUserFetcher {
         } else {
 
             info.setEmail(googleLoginInfo.getOwnerEmail());
-            info.setLogoutUrl(userService.createLogoutURL("/login"));
+            info.setLogoutUrl(userService.createLogoutURL("/"));
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();

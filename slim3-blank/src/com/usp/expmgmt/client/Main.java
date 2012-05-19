@@ -1,8 +1,5 @@
 package com.usp.expmgmt.client;
 
-import org.hamcrest.core.IsInstanceOf;
-
-import com.gargoylesoftware.htmlunit.javascript.host.Document;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,7 +19,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -31,8 +27,6 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,7 +36,6 @@ import com.usp.expmgmt.client.service.ExpenseReportRetrieverAsync;
 import com.usp.expmgmt.client.service.LoggedInUserFetcher;
 import com.usp.expmgmt.client.service.LoggedInUserFetcherAsync;
 import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
-import com.usp.expmgmt.shared.util.LogInInfo;
 
 public class Main implements EntryPoint {
 
@@ -56,13 +49,11 @@ public class Main implements EntryPoint {
     final Button button = new Button("Submit");
     final ExpenseForm expenseForm = new ExpenseForm();
     int count = 0;
-    final HTML htmlLogout = new HTML();
     final Button logoutButton = new Button("Logout");
     final HTML projectName = new HTML();
     
     final Hyperlink refresh = new Hyperlink();
     private String ownerEmail;
-    private String logoutUrl;
 
     final DisplayTransactionsPanel dcPanelClaims = new DisplayTransactionsPanel(Type.CLAIM);
     final DisplayTransactionsPanel dcPanelDebts = new DisplayTransactionsPanel(Type.DEBT);
@@ -128,8 +119,6 @@ public class Main implements EntryPoint {
                     ownerEmail = info.getEmail();
                     //oracle.addAll(info.getContactList());
                     dcPanelClaims.setOwnerEmail(ownerEmail);
-                    htmlLogout.setHTML("<a href=\"" + info.getLogoutUrl() + "\"> Logout </a>");
-                    logoutUrl = info.getLogoutUrl() ;
                     dcPanelDebts.setOwnerEmail(ownerEmail);
                     dcPanelNetpays.setOwnerEmail(ownerEmail);
                     init();
@@ -172,7 +161,7 @@ public class Main implements EntryPoint {
         logoutButton.addClickHandler(new ClickHandler() {
             
             public void onClick(ClickEvent event) {
-                Window.Location.replace(logoutUrl);
+                Window.Location.replace("/logoutURL");
             }
         });
     }

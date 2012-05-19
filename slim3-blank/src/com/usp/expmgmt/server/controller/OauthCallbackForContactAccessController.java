@@ -69,7 +69,7 @@ public class OauthCallbackForContactAccessController extends Controller {
             // Something went wrong. Usually, you'll end up here if we have invalid
             // oauth tokens
         } 
-        return forward("/");
+        return forward("/login.html");
       //  return forward(USER_INTERFACE_URI);
     }
 }
