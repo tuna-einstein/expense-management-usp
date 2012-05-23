@@ -9,6 +9,7 @@
 	<inherits name="com.google.gwt.user.theme.chrome.Chrome"/>
 	<!--  <inherits name="com.google.gwt.user.theme.dark.Dark" /> -->
 	<entry-point class="com.usp.expmgmt.client.Main"/>
+	<stylesheet src="custom.css" />
 	<source path="client"/>
 	<source path="shared"/>
 </module>

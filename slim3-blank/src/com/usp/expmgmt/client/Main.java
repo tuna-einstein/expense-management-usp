@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -64,7 +65,7 @@ public class Main implements EntryPoint {
     
     private HTML getHelpContent() {
         HTML html = new HTML();
-        html.setHTML("<iframe WIDTH=800 HEIGHT=1200 src=\"https://docs.google.com/document/pub?id=1Yiz-EKi16-9zzxzlOWJiIvB6Qwc7UjdgKIQz2AnMfi4&amp;embedded=true\"></iframe>"); 
+        html.setHTML("<iframe WIDTH=990 HEIGHT=800 src=\"https://docs.google.com/document/pub?id=1Yiz-EKi16-9zzxzlOWJiIvB6Qwc7UjdgKIQz2AnMfi4&amp;embedded=true\"></iframe>"); 
         return html;
     }
 
@@ -77,23 +78,41 @@ public class Main implements EntryPoint {
         hpanelForTransactionDisplay.setWidth("100%");
        // hpanelForTransactionDisplay.add(expenseForm);
         
+      
+        
         expenseForm.setOracle(oracle);
         
         hpanelForTransactionDisplay.add(logoutButton);
-        displayTransactionsTabs.add(expenseForm, "Add Transaction");
-        displayTransactionsTabs.add(dcPanelClaims, "Claims");
-        displayTransactionsTabs.add(dcPanelDebts, "Debts");
-        displayTransactionsTabs.add(dcPanelNetpays, "Net-Payments");
-        displayTransactionsTabs.add(new FeedbackForm(), "Feedback");
+        Label label = new Label("Add Transaction");
+        label.setWidth("150px");
+        displayTransactionsTabs.add(expenseForm, label);
+        
+        label = new Label("Claims");
+        label.setWidth("100px");
+        displayTransactionsTabs.add(dcPanelClaims, label);
+        
+        label = new Label("Debts");
+        label.setWidth("100px");
+        displayTransactionsTabs.add(dcPanelDebts, label);
+        
+        label = new Label("Net-Payments");
+        label.setWidth("100px");
+        displayTransactionsTabs.add(dcPanelNetpays, label);
+        
+        label = new Label("Feedback");
+        label.setWidth("100px");
+        displayTransactionsTabs.add(new FeedbackForm(), label);
 
-        displayTransactionsTabs.add(getHelpContent(), "Help and Contacts");
+        label = new Label("Help and Support");
+        label.setWidth("150px");
+        displayTransactionsTabs.add(getHelpContent(), label);
         
       
         
       //  displayTransactionsTabs.setWidth("50%");
       //  displayTransactionsTabs.setHeight("50%");
         displayTransactionsTabs.selectTab(0);
-        displayTransactionsTabs.setSize("800px", "500px");
+        displayTransactionsTabs.setSize("1000px", "500px");
         displayTransactionsTabs.setHeight("500px");
         displayTransactionsTabs.addStyleName("table-center");
         RootPanel.get("expense-display").add(hpanelForTransactionDisplay);

@@ -42,4 +42,10 @@ input.err { background-color: orange; }
  clear: left;
 }
 
+.help-support {
+ font-weight:bold;
+ color:red;
+ text-decoration:blink
+}
+
 

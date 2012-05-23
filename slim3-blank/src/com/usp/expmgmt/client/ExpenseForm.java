@@ -8,14 +8,11 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -25,7 +22,6 @@ import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -47,6 +43,7 @@ public class ExpenseForm extends FormPanel {
     private final List<TextBox> amountBoxList = new ArrayList();
     private final TextBox totalAmount = new TextBox();
     final Anchor addMoreDetails = new Anchor("Add More Details to this Expense and Submit");
+    HandlerRegistration registration;
     
     public ExpenseForm() {
         this.anchor = new Anchor("Add More People to this expense");
@@ -66,17 +63,120 @@ public class ExpenseForm extends FormPanel {
         descriptionText.setCharacterWidth(100);
         descriptionText.setVisibleLines(1);
         descriptionText.setName("description");
+        
+        totalAmount.addKeyUpHandler(new KeyUpHandler() {
+
+            public void onKeyUp(KeyUpEvent event) {
+                distributeTotal();
+
+            }
+        });
+        
+        anchor.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                verticalPanel.add(getEmailAndAmount(""));
+                verticalPanel.add(anchor);
+                verticalPanel.add(new HTML(" "));
+                verticalPanel.add(button);
+
+
+                distributeTotal();
+            }
+        });
+        button.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                submit();
+            }
+        });
+        
+        
+        addFormHandler(new FormHandler() {
+
+
+
+            public void onSubmitComplete(FormSubmitCompleteEvent event) {
+
+                descriptionText.setText("");
+                Window.alert(event.getResults());
+                while (verticalPanel.getWidgetCount() != 0) {
+                    verticalPanel.remove(0);
+                }
+               registration.removeHandler();
+               textBoxList.clear();
+               amountBoxList.clear();
+                init(ownerEmail.getText());
+            }
+
+            private boolean checkDuplicacy() {
+                int length = textBoxList.size();
+                for (int i = 0; i < length ; i++ ) {
+                    String parent = textBoxList.get(i).getText();
+                    for (int j= i + 1; j< length ; j++) {
+                        if (parent.equals(textBoxList.get(j).getText())) {
+                            Window.alert("Duplicates :" + parent);
+                            textBoxList.get(i).getElement().getStyle().setProperty("background-color", "blue");
+                            textBoxList.get(j).getElement().getStyle().setProperty("background-color", "blue");
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            public void onSubmit(FormSubmitEvent event) {
+
+                for (SuggestBox box : textBoxList) {
+                    if (!checkEmail(box)) {
+                        
+                        event.setCancelled(true);
+                       
+                    }
+                }
+                
+                if (event.isCancelled()) {
+                    Window.alert("Invalid email");
+                    return;
+                }
+                // Check amount boxes
+                for (TextBox box : amountBoxList) {
+                    if(!checkAmount(box)) {
+                        
+                        event.setCancelled(true);
+                        
+                    }
+                }
+                
+                if (event.isCancelled()) {
+                    Window.alert("Invalid amount");
+                    return;
+                }
+
+                if(descriptionText.getText().length() > 100) {
+                    Window.alert("Description length can't be more than 100 characters");
+                    event.setCancelled(true);
+                    return;
+                }
+
+                if (checkDuplicacy()) {
+                    event.setCancelled(true);
+                }
+                // TODO Auto-generated method stub
+
+            }
+        });
+
+
     }
 
     private void distributeTotal() {
         Double tamount= 0.0;
         try {
-        tamount = Double.valueOf(totalAmount.getText());
-        tamount = tamount / amountBoxList.size();
+            tamount = Double.valueOf(totalAmount.getText());
+            tamount = tamount / amountBoxList.size();
         } catch (Exception e) {
-            
+            return;
         }
-        
+
         for (TextBox box : amountBoxList) {
             box.setText(tamount.toString());
         }
@@ -89,188 +189,119 @@ public class ExpenseForm extends FormPanel {
         // Autofill for logged in user
         ownerEmail.setText(email);
         ownerEmail.setReadOnly(true);
-        
+        addMoreDetails.setVisible(true);
+
         HorizontalPanel hp = new HorizontalPanel();
         hp.setWidth("800px");
         hp.add(dateBox);
-        
+
         HorizontalPanel hpForTotal = new HorizontalPanel();
         hpForTotal.add(new HTML("<b>Total Amount: "));
         hpForTotal.add(totalAmount);
-        
+
         hp.add(hpForTotal);
-        
-        
-        
-        totalAmount.addKeyUpHandler(new KeyUpHandler() {
-            
-            public void onKeyUp(KeyUpEvent event) {
-                distributeTotal();
-                
-            }
-        });
+
+
+
        
-      hp.add(ownerEmail);
-      ownerEmail.setVisible(false);
+
+        hp.add(ownerEmail);
+        ownerEmail.setVisible(false);
         verticalPanel.add(hp);
-        
-        
-        
+
+
+
         // Add expense description
         verticalPanel.add(new HTML("<b>Expense Description: "));
         verticalPanel.add(descriptionText);
-        
-        
+
+
         verticalPanel.add(addMoreDetails);
-        addMoreDetails.addClickHandler(new ClickHandler() {
-            
+        registration = addMoreDetails.addClickHandler(new ClickHandler() {
+
             public void onClick(ClickEvent event) {
                 addMoreDetails.setVisible(false);
                 verticalPanel.add(getEmailAndAmount(email));
                 verticalPanel.add(anchor);
                 verticalPanel.add(new HTML(" "));
                 verticalPanel.add(button);
-                
-                
-                distributeTotal();
-                
-            }
-        });
-        
-             
-         
-         // add the verticalPanel to form
-         this.setWidget(verticalPanel);
-         
-         // Add action destination
-         setAction("/save_expense");
-         
-         anchor.addClickHandler(new ClickHandler() {
-             public void onClick(ClickEvent event) {
-                 verticalPanel.add(getEmailAndAmount(""));
-                 verticalPanel.add(anchor);
-                 verticalPanel.add(new HTML(" "));
-                 verticalPanel.add(button);
-                 
-                 
-                 distributeTotal();
-             }
-         });
-         button.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                submit();
-            }
-         });
 
-         addFormHandler(new FormHandler() {
-            
-             private native boolean isValidEmail(String email) /*-{ 
-             var reg1 = /(@.*@)|(\.\.)|(@\.)|(\.@)|(^\.)/; // not valid 
-             var reg2 = /^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$/; // valid 
-             return !reg1.test(email) && reg2.test(email); 
-     }-*/; 
-             
-            public void onSubmitComplete(FormSubmitCompleteEvent event) {
-                
-                descriptionText.setText("");
-                Window.alert(event.getResults());
-               while (verticalPanel.getWidgetCount() != 0) {
-                   verticalPanel.remove(0);
-               }
-               
-                init(ownerEmail.getText());
-            }
-            
-            private boolean checkDuplicacy() {
-                int length = textBoxList.size();
-                for (int i = 0; i < length ; i++ ) {
-                    String parent = textBoxList.get(i).getText();
-                    for (int j= i + 1; j< length ; j++) {
-                        if (parent.equals(textBoxList.get(j).getText())) {
-                          Window.alert("Duplicates :" + parent);
-                          return true;
-                        }
-                    }
-                }
-                return false;
-            }
-            
-            public void onSubmit(FormSubmitEvent event) {
-               for (SuggestBox box : textBoxList) {
-                   String str = box.getText();
-                   if (str.contains("<")) {
-                       int begin = str.indexOf("<");
-                       int end = str.indexOf(">");
-                       str = str.substring(begin + 1, end);
-                       
-                   }
-                   if (isValidEmail(str)) {
-                   box.setText(str);
-                   } else {
-                       Window.alert("Invalid email:" + str);
-                       event.setCancelled(true);
-                   }
-               }
-               
-               // Check amount boxes
-               for (TextBox box : amountBoxList) {
-                   try {
-                       Double.valueOf(box.getText());
-                   } catch (Exception e) {
-                       Window.alert("Invalid amount:" + box.getText());
-                       event.setCancelled(true);
-                   }
-               }
-               
-               if(descriptionText.getText().length() > 100) {
-                   Window.alert("Description length can't be more than 100 characters");
-                   event.setCancelled(true);
-               }
-               
-               if (checkDuplicacy()) {
-                   event.setCancelled(true);
-               }
-                 // TODO Auto-generated method stub
-                
+
+                distributeTotal();
+
             }
         });
-         
-         return this;
+
+
+
+        // add the verticalPanel to form
+        this.setWidget(verticalPanel);
+
+        // Add action destination
+        setAction("/save_expense");
+
+      
+     
+        return this;
     }
- 
+
     public void setOracle(MultiWordSuggestOracle oracle) {
         this.oracle = oracle;
     }
     private HorizontalPanel getEmailAndAmount(String userEmail) {
         final SuggestBox box = new SuggestBox(oracle);
-              textBoxList.add(box);
-              box.setWidth("200px");
-              
+        textBoxList.add(box);
+        box.setWidth("200px");
+       
+       
+     
         final TextBox amount = new TextBox();
+
         box.getTextBox().setName(EMAIL);
         box.getTextBox().setText(userEmail);
-        amount.setName(AMOUNT);
-        amount.setText("0.00");
-        amountBoxList.add(amount);
         
+        box.getTextBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+            public void onValueChange(ValueChangeEvent<String> event) {
+                if(!checkEmail(box)) {
+                  //  Window.alert("invalid email");
+                }
+                
+            }
+        });
+        
+        
+        amount.setName(AMOUNT);
+        amount.setText("0");
+        amountBoxList.add(amount);
+        amount.addValueChangeHandler(new ValueChangeHandler<String>() {
+            
+            public void onValueChange(ValueChangeEvent<String> event) {
+                if(!checkAmount(amount)) {
+                  //  Window.alert("Invalid amount");
+                }
+                
+            }
+        });
+       
+
         final HorizontalPanel hp = new HorizontalPanel();
         hp.add(box);
         hp.setSpacing(5);
         hp.add(amount);
-        
-        
-       Anchor remove = new Anchor(" Remove");
-       remove.setTitle("Remove");
-       
+
+
+        Anchor remove = new Anchor(" Remove");
+        remove.setTitle("Remove");
+
         hp.add(remove);
         remove.addClickHandler(new ClickHandler() {
-            
+
             public void onClick(ClickEvent event) {
                 hp.removeFromParent();
-                
+
                 textBoxList.remove(box);
                 amountBoxList.remove(amount);
-                
+
                 distributeTotal();
                 if (amountBoxList.isEmpty()) {
                     addMoreDetails.setVisible(true);
@@ -279,7 +310,45 @@ public class ExpenseForm extends FormPanel {
                 }
             }
         });
-        
+
         return hp;
     }
- }
+
+    private native boolean isValidEmail(String email) /*-{ 
+    var reg1 = /(@.*@)|(\.\.)|(@\.)|(\.@)|(^\.)/; // not valid 
+    var reg2 = /^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$/; // valid 
+    return !reg1.test(email) && reg2.test(email); 
+}-*/; 
+
+    private boolean checkEmail(SuggestBox box) {
+        String str = box.getText();
+        if (str.contains("<")) {
+            int begin = str.indexOf("<");
+            int end = str.indexOf(">");
+            str = str.substring(begin + 1, end);
+        }
+        if (isValidEmail(str)) {
+            box.setText(str);
+            box.getElement().getStyle().setProperty("background-color", "white");
+            return true;
+        } else {
+            box.getElement().getStyle().setProperty("background-color", "red");
+            return false;
+        }
+    }
+
+    private boolean checkAmount(TextBox box) {
+        try {
+            Double am = Double.valueOf(box.getText());
+            if (am < 0.1) {
+                box.getElement().getStyle().setProperty("background-color", "red");
+                return false;
+            }
+            box.getElement().getStyle().setProperty("background-color", "white");
+            return true;
+        } catch (Exception e) {
+            box.getElement().getStyle().setProperty("background-color", "red");
+            return false;
+        }
+    }
+}
