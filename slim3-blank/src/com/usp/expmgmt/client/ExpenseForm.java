@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -16,12 +14,14 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -43,6 +43,9 @@ public class ExpenseForm extends FormPanel {
     private final List<TextBox> amountBoxList = new ArrayList();
     private final TextBox totalAmount = new TextBox();
     final Anchor addMoreDetails = new Anchor("Add More Details to this Expense and Submit");
+    final CheckBox checkBox = new CheckBox();
+    private final HorizontalPanel sendEmailPanel = new HorizontalPanel();
+    
     HandlerRegistration registration;
     
     public ExpenseForm() {
@@ -64,6 +67,12 @@ public class ExpenseForm extends FormPanel {
         descriptionText.setVisibleLines(1);
         descriptionText.setName("description");
         
+        checkBox.setName("sendMail");
+        checkBox.setFormValue("set");
+        sendEmailPanel.add(new Label("Notify through Email: "));
+        sendEmailPanel.add(checkBox);
+        sendEmailPanel.setSpacing(8);
+        
         totalAmount.addKeyUpHandler(new KeyUpHandler() {
 
             public void onKeyUp(KeyUpEvent event) {
@@ -77,6 +86,7 @@ public class ExpenseForm extends FormPanel {
                 verticalPanel.add(getEmailAndAmount(""));
                 verticalPanel.add(anchor);
                 verticalPanel.add(new HTML(" "));
+                verticalPanel.add(sendEmailPanel);
                 verticalPanel.add(button);
 
 
@@ -224,11 +234,9 @@ public class ExpenseForm extends FormPanel {
                 verticalPanel.add(getEmailAndAmount(email));
                 verticalPanel.add(anchor);
                 verticalPanel.add(new HTML(" "));
+                verticalPanel.add(sendEmailPanel);
                 verticalPanel.add(button);
-
-
                 distributeTotal();
-
             }
         });
 

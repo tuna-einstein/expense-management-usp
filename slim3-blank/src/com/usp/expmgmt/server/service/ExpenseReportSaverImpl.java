@@ -8,29 +8,43 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slim3.datastore.Datastore;
 import org.slim3.util.BeanUtil;
-import org.slim3.util.CopyOptions;
 import org.slim3.util.RequestLocator;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Transaction;
-import com.google.gdata.data.dublincore.Date;
 import com.google.gson.Gson;
 import com.usp.expmgmt.client.service.ExpenseReportSaver;
-import com.usp.expmgmt.server.meta.ExpenseReportMeta;
 import com.usp.expmgmt.shared.model.ChangeLogMessage;
 import com.usp.expmgmt.shared.model.ExpenseReport;
+import com.usp.expmgmt.shared.util.EmailSender;
 import com.usp.expmgmt.shared.util.ExpenseContent;
 
 public class ExpenseReportSaverImpl implements ExpenseReportSaver {
-    
+    private final EmailSender sender = new EmailSender();
     public ExpenseReport save(Map<String, Object> input) {
         ExpenseReport report = new ExpenseReport();
         BeanUtil.copy(input, report);
         Transaction tx = Datastore.beginTransaction();
         Datastore.put(report);
         tx.commit();
+        String checkedValue = (String) input.get("sendMail");
+        if ("set".equals(checkedValue)) {
+            sender.sendEmail(report.getOwnerEmail(), "Expenses Report from:" + report.getOwnerEmail(), getBodyOfMail(report), report.getEmailList());
+        }
         return report;
+    }
+
+    private String getBodyOfMail(final ExpenseReport report) {
+        String res = "Expense Description : " + report.getDescription();
+        res = res + "\n Date : " + report.getDate();
+        
+        res = res + "\nPeople involved:";
+        for (int i=0; i< report.getEmailList().size(); i++) {
+            res = res + "\n" + report.getEmailList().get(i) + " : "+report.getAmountList().get(i);
+        }
+        res = res + "\nPlease visit usp0000.appspot.com for more details.";
+        return res;
     }
     
     public static String getLoggedInUser() {
