@@ -85,7 +85,7 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         ExpenseReport report = content.toExpenseReport();
         
         if (!report.getOwnerEmail().equals(getLoggedInUser())) {
-            return getLoggedInUser() + " can delete this transaction :)";
+            return getLoggedInUser() + " can't delete this transaction :)";
         }
         //gson.
        // BeanUtil.copy(input, report);

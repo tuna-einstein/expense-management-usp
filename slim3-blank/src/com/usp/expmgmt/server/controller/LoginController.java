@@ -34,6 +34,7 @@ public class LoginController extends Controller {
         HttpServletResponse response = ResponseLocator.get();
         String ownerEmail = getOwnerEmail();
         if (ownerEmail == null) {
+            request.getSession().setAttribute("logoutFromGmail", "yes");
             UserService userService = UserServiceFactory.getUserService();
             response.sendRedirect(userService.createLoginURL("/login"));
         }

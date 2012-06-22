@@ -179,4 +179,30 @@ public class ExpenseReport implements Serializable {
         int end = str.indexOf(">");
         return str.substring(begin + 1, end);
     }
+    
+    public Double totalAmount() {
+        Double total = 0.0;
+        for (Double d : amountList) {
+            total = total + d; 
+        }
+        return total;
+    }
+    
+    public ExpenseReport clone() {
+        ExpenseReport report = new ExpenseReport();
+        List<Double> alist = new ArrayList();
+        alist.addAll(amountList);
+        report.setAmountList(alist);
+        report.setDate(date);
+        
+        report.setDescription(description);
+        List<String> elist = new ArrayList();
+        elist.addAll(emailList);
+        report.setEmailList(elist);
+        
+        report.setKey(key);
+        report.setOwnerEmail(ownerEmail);
+        report.setVersion(version);
+        return report;
+    }
 }

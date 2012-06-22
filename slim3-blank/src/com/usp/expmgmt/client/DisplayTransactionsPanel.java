@@ -26,11 +26,12 @@ public class DisplayTransactionsPanel extends ScrollPanel {
     private final Type type;
     private String ownerEmail;
     private final FlexTable flexTable = new FlexTable();
-    private final DisplayUserExpenseReportList reportList = new DisplayUserExpenseReportList();
+    private final DisplayUserExpenseReportList reportList;
     public DisplayTransactionsPanel(Type type ) {
         this.type = type;
         flexTable.setCellSpacing(5);
         flexTable.setCellPadding(2);
+        reportList = new DisplayUserExpenseReportList(type);
         addClickHandler() ;
     }
 
@@ -58,53 +59,7 @@ public class DisplayTransactionsPanel extends ScrollPanel {
         for (int i=0; i< userAndAmountArray.length(); i++) {
             addUserAndAmountJSO(userAndAmountArray.get(i));
         }
-
-//       addClickHandler(new ClickHandler() {
-//           private  UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
-//            public void onClick(ClickEvent event) {
-//                Cell cell = getCellForEvent(event);
-//                final int row = cell.getRowIndex();
-//                final HTML htmlEmail = (HTML)  getWidget(row, 0);
-//                final int col = getCellCount(row);
-//                
-//                AsyncCallback callback =  new AsyncCallback<String>() {
-//                    public void onFailure(Throwable caught) {
-//                        Window.alert(caught.getMessage());
-//                    }
-//
-//                    public void onSuccess(String json) {
-//                        UserExpenseReportListPopup pop = new UserExpenseReportListPopup();
-//                        pop.init(json);
-//                        pop.setAnimationEnabled(true);
-//                        pop.setPopupPosition(
-//                            getWidget(row, col - 1).getAbsoluteLeft() + getWidget(row, col - 1).getOffsetWidth(),
-//                            getWidget(row, col - 1).getAbsoluteTop() + getWidget(row, col - 1).getOffsetHeight()
-//                            );
-//                        pop.show();
-//                    }
-//                };
-//                if (type == Type.CLAIM) {
-//                    service.getUserExpenseReportsAsJson(ownerEmail, htmlEmail.getHTML(), callback);
-//                } else if (type == Type.DEBT) {
-//                    service.getUserExpenseReportsAsJson(htmlEmail.getHTML(), ownerEmail, callback);
-//                }
-//            }
-//        });       
     }
-
-    
-//    private void addExpenseReport(ExpenseReportJSO report) {
-//        flexTable.insertRow(flexTable.getRowCount());
-//        flexTable.getFlexCellFormatter().setColSpan(flexTable.getRowCount() - 1, 0, 2);
-//        // flexTable.setText(flexTable.getRowCount() - 1, 0,
-//        //    report.getOwnerEmail() + "( " + report.getDescription() + " )");
-//
-//        for (int i = 0; i < report.getEmailList().length(); i++) {
-//            flexTable.insertRow(flexTable.getRowCount());
-//            flexTable.setText(flexTable.getRowCount() - 1, 0, report.getEmailList().get(i) );
-//            flexTable.setText(flexTable.getRowCount() - 1, 1, String.valueOf(report.getAmountList().get(i)));
-//        }
-//    }
 
     private void addUserAndAmountJSO(UserAndAmountJSO userAndAmount) {
         flexTable.insertRow(flexTable.getRowCount());
@@ -137,32 +92,6 @@ public class DisplayTransactionsPanel extends ScrollPanel {
        }
     }
 
-//    private ClickHandler getClearAnchorClickHandler(final String userEmail, final Anchor anchor) {
-//       final ClearClaimsForXAsync service = GWT.create(ClearClaimsForX.class);
-//        
-//        ClickHandler handler = new ClickHandler() {
-//            
-//            public void onClick(ClickEvent event) {
-//               
-//                if(!Window.confirm("Click Ok to clear all the claims for " + userEmail)){
-//                    return;
-//                }
-//                service.clearClaims(userEmail, new AsyncCallback<String>() {
-//
-//                    public void onFailure(Throwable caught) {
-//                        Window.alert(caught.getMessage());
-//                    }
-//
-//                    public void onSuccess(String result) {
-//                        Window.alert(result);
-//                        anchor.removeFromParent();
-//                    }
-//                });
-//            }
-//        };
-//        return handler;
-//    }
-    
     private void addClickHandler() {
         flexTable.addClickHandler(new ClickHandler() {
             private  UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
