@@ -48,4 +48,8 @@ input.err { background-color: orange; }
  text-decoration:blink
 }
 
+a.selected {
+	border: 1px SOLID red;
+	background-color: #D8E9F0;
+}
 

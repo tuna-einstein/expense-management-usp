@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -12,6 +13,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -28,6 +30,9 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
+import com.usp.expmgmt.client.service.LoggedInUserFetcher;
+import com.usp.expmgmt.client.service.LoggedInUserFetcherAsync;
+import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
 
 public class ExpenseForm extends FormPanel {
     public static final String EMAIL = "emailArray";
@@ -358,5 +363,26 @@ public class ExpenseForm extends FormPanel {
             box.getElement().getStyle().setProperty("background-color", "red");
             return false;
         }
+    }
+    
+    
+    public void setContacts() {
+        LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
+        ownerEmailfetcher.getOwnerEmail(new AsyncCallback<String>() {
+
+            public void onFailure(Throwable caught) {
+                Window.Location.replace("/logoutURL");
+            }
+
+            public void onSuccess(String result) {
+                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
+                if (info.getLoginUrl().equals("")) {
+                    oracle.addAll(info.getContactList());
+                    setOracle(oracle);
+                } else {
+                    Window.open(info.getLoginUrl(),  "_self", "");
+                }
+            }
+        });
     }
 }
