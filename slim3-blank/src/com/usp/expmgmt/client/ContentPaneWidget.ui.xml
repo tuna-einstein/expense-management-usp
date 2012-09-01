@@ -9,6 +9,6 @@
 		border: 1px SOLID red;
 		}
 	</ui:style>
-	<g:FlowPanel ui:field="contentPanel" addStyleNames="{style.panel-border}"/>
+	<g:ScrollPanel ui:field="contentPanel" addStyleNames="{style.panel-border}"/>
 		
 </ui:UiBinder> 

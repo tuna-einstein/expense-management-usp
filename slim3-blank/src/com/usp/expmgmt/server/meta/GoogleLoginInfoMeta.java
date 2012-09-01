@@ -1,8 +1,6 @@
 package com.usp.expmgmt.server.meta;
 
-import com.usp.expmgmt.server.meta.GoogleLoginInfoMeta;
-
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-03-31 13:35:07")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-08-31 08:58:32")
 /** */
 public final class GoogleLoginInfoMeta extends org.slim3.datastore.ModelMeta<com.usp.expmgmt.shared.model.GoogleLoginInfo> {
 

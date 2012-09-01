@@ -8,19 +8,15 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.usp.expmgmt.client.DisplayTransactionsPanel.Type;
 import com.usp.expmgmt.client.service.ExpenseReportRetriever;
 import com.usp.expmgmt.client.service.ExpenseReportRetrieverAsync;
-import com.usp.expmgmt.client.service.LoggedInUserFetcher;
-import com.usp.expmgmt.client.service.LoggedInUserFetcherAsync;
-import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
 
 public class LeftPaneWidget extends Composite {
 
@@ -47,11 +43,11 @@ public class LeftPaneWidget extends Composite {
     final FeedbackForm feedbackForm = new FeedbackForm();
     private String ownerEmail;
     
-    final FlowPanel centerContentWidget;
+    final ScrollPanel centerContentWidget;
     
     private static ExpenseReportRetrieverAsync service = GWT.create(ExpenseReportRetriever.class);
 	
-	public LeftPaneWidget(FlowPanel centerContentWidget) {
+	public LeftPaneWidget(ScrollPanel centerContentWidget) {
 		initWidget(uiBinder.createAndBindUi(this));
 		currentSelection = addTransaction;
 		currentWidget = expenseForm;
@@ -127,7 +123,9 @@ public class LeftPaneWidget extends Composite {
         dcPanelDebts.setOwnerEmail(ownerEmail);
         dcPanelNetpays.setOwnerEmail(ownerEmail);
         expenseForm.init(ownerEmail);
+        if (!"test@example.com".equals(ownerEmail)) {
         expenseForm.setContacts();
+        }
 	}
 	
 	private void initClaims() {

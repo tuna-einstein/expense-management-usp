@@ -1,6 +1,6 @@
 package com.usp.expmgmt.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-04-16 22:15:33")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-08-31 08:58:32")
 /** */
 public final class FeedbackDataMeta extends org.slim3.datastore.ModelMeta<com.usp.expmgmt.shared.model.FeedbackData> {
 

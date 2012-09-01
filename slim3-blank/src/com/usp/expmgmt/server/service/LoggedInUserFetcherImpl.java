@@ -65,8 +65,9 @@ public class LoggedInUserFetcherImpl implements LoggedInUserFetcher {
             "GoogleLoginInfo");
         if (googleLoginInfo == null) {
             info.setLoginUrl(userService.createLoginURL("/login"));
+        } else if ("test@example.com".equals(googleLoginInfo.getOwnerEmail())) {
+            info = getTestContacts(googleLoginInfo.getOwnerEmail());
         } else {
-
             info.setEmail(googleLoginInfo.getOwnerEmail());
             info.setLogoutUrl(userService.createLogoutURL("/"));
         }
@@ -152,5 +153,18 @@ public class LoggedInUserFetcherImpl implements LoggedInUserFetcher {
             return cetd;
         }
         return null;
+    }
+    
+    private LogInInfo getTestContacts(String email) {
+        LogInInfo info = new LogInInfo();
+        ContactInfo cinfo = new ContactInfo();
+        cinfo.setEmail("contact@example.com");
+        cinfo.setFirstName("firstname");
+        cinfo.setLastName("lastname");
+        info.setEmail(email);
+        ArrayList<ContactInfo> list = new ArrayList<ContactInfo>();
+        list.add(cinfo);
+        info.setContacts(list);
+        return info;
     }
 }

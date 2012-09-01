@@ -3,18 +3,16 @@ package com.usp.expmgmt.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.NamedFrame;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.usp.expmgmt.client.service.LoggedInUserFetcher;
@@ -31,11 +29,10 @@ public class Main1 implements EntryPoint {
     final VerticalPanel panel = new VerticalPanel();
 
     int count = 0;
-    final Button logoutButton = new Button("Logout");
     final HTML projectName = new HTML();
 
     final Hyperlink refresh = new Hyperlink();
-    
+
     final DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
     final TopPaneWidget topPane = new TopPaneWidget();
     final ContentPaneWidget contentPane = new ContentPaneWidget();
@@ -46,14 +43,14 @@ public class Main1 implements EntryPoint {
         dockLayoutPanel.addNorth(topPane, 80);
         dockLayoutPanel.addWest(leftPane, 250);
         dockLayoutPanel.add(contentPane);
-        dockLayoutPanel.setSize("1000px", "700px");
+        dockLayoutPanel.setSize("100%", "100%");
         RootPanel.get("umasankar").remove(im);
-        RootPanel.get("umasankar").add(dockLayoutPanel);
+        RootLayoutPanel.get().add(dockLayoutPanel);
     }
 
     public void onModuleLoad() {
-        
-        
+
+
         im.setUrl("loading37.gif");
         RootPanel.get("umasankar").add(im);
         LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
@@ -75,12 +72,7 @@ public class Main1 implements EntryPoint {
             }
         });
 
-        logoutButton.addClickHandler(new ClickHandler() {
 
-            public void onClick(ClickEvent event) {
-                Window.Location.replace("/logoutURL");
-            }
-        });
     }
 }
 
