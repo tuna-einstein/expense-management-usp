@@ -17,11 +17,11 @@ public class GoogleLoginInfo implements Serializable {
 
     @Attribute(version = true)
     private Long version;
-    
+
     private String accessToken;
-    
+
     private String accessTokenSecrete;
-    
+
     private String ownerEmail;
 
     /**

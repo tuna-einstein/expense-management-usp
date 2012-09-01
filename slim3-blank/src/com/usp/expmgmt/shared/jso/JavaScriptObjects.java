@@ -1,15 +1,11 @@
 package com.usp.expmgmt.shared.jso;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayNumber;
 import com.google.gwt.core.client.JsArrayString;
 import com.usp.expmgmt.shared.model.ChangeLogMessage;
 import com.usp.expmgmt.shared.model.ExpenseReport;
-import com.usp.expmgmt.shared.util.ContactInfo;
 import com.usp.expmgmt.shared.util.ExpenseContent;
 import com.usp.expmgmt.shared.util.UserMapperAmountReducer.UserAndAmount;
 
@@ -105,66 +101,7 @@ public class JavaScriptObjects {
         }-*/;
 
     }
-    
-    /**
-     * {@link LogInInfo}
-     */
-    
-    public static class LogInInfoJSO extends JavaScriptObject {                              // (1)
-        // Overlay types always have protected, zero argument constructors.
-        protected LogInInfoJSO() {}                                              // (2)
-
-        // JSNI methods to get stock data.
-        public final native String getEmail() /*-{ return this.email; }-*/;
-        public final native String getLoginUrl() /*-{ return this.loginUrl; }-*/;
-        public final native String getLogoutUrl() /*-{ return this.logoutUrl; }-*/;
-        public final native JsArray<ContactInfoJSO> getContacts() /*-{return this.contacts; }-*/;
-
-        /**
-         * Convert the string of JSON into JavaScript object.
-         */
-        public static final native LogInInfoJSO  asLogInInfoJSO (String json)
-        /*-{
-          return eval(json);
-        }-*/;
-        
-        public final List<String> getContactList() {
-            List<String> list = new ArrayList<String>();
-            JsArray<ContactInfoJSO> array = getContacts();
-            for (int i=0; i<array.length(); i++) {
-                list.add(array.get(i).getString());
-            }
-            return list;
-        }
-    }
-    
-    /**
-     * {@link ContactInfo}
-     */
-    
-    public static class ContactInfoJSO extends JavaScriptObject {                              // (1)
-        // Overlay types always have protected, zero argument constructors.
-        protected ContactInfoJSO() {}                                              // (2)
-
-        // JSNI methods to get stock data.
-        public final native String getEmail() /*-{ return this.email; }-*/;
-        public final native String getFirstName() /*-{ return this.firstName; }-*/;
-        public final native String getLastName() /*-{ return this.lastName; }-*/;
-
-        /**
-         * Convert the string of JSON into JavaScript object.
-         */
-        public static final native ContactInfoJSO  asContactInfoJSO (String json)
-        /*-{
-          return eval(json);
-        }-*/;
-        
-        public final String getString() {
-            return getFirstName() + " " +getLastName() + "<"+ getEmail() + ">";
-        }
-
-    }
-
+ 
     /**
      * {@link ChangeLogMessage}
      */

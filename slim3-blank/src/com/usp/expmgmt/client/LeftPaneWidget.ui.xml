@@ -44,6 +44,10 @@
 				<gwt:Anchor ui:field="netPayments" addStyleNames="{style.actionLink}">
 					Net Payments
 				</gwt:Anchor>
+				
+				<gwt:Anchor ui:field="addContact" addStyleNames="{style.actionLink}">
+					Add Contact
+				</gwt:Anchor>
 			
 				<gwt:Anchor ui:field="feedback" addStyleNames="{style.actionLink}">
 					Feedback

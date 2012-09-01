@@ -15,9 +15,8 @@ import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.usp.expmgmt.client.service.LoggedInUserFetcher;
-import com.usp.expmgmt.client.service.LoggedInUserFetcherAsync;
-import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
+import com.usp.expmgmt.client.service.GetLoggedInUserEmail;
+import com.usp.expmgmt.client.service.GetLoggedInUserEmailAsync;
 
 public class Main1 implements EntryPoint {
 
@@ -53,7 +52,7 @@ public class Main1 implements EntryPoint {
 
         im.setUrl("loading37.gif");
         RootPanel.get("umasankar").add(im);
-        LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
+        GetLoggedInUserEmailAsync ownerEmailfetcher = GWT.create(GetLoggedInUserEmail.class);
         ownerEmailfetcher.getLoggedInUserEmail( new AsyncCallback<String>() {
 
             public void onFailure(Throwable caught) {
@@ -61,13 +60,12 @@ public class Main1 implements EntryPoint {
 
             }
             public void onSuccess(String result) {
-                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
-                if (info.getLoginUrl().equals("")) {
-                    topPane.setOwnerEmail(info.getEmail());
-                    leftPane.init(info.getEmail());
+                if (result.contains("@")) {
+                    topPane.setOwnerEmail(result);
+                    leftPane.init(result);
                     init();
                 } else {
-                    Window.open(info.getLoginUrl(),  "_self", "");
+                    Window.open(result,  "_self", "");
                 }
             }
         });

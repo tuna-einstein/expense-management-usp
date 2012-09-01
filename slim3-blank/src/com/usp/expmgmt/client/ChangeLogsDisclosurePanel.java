@@ -1,7 +1,6 @@
 package com.usp.expmgmt.client;
 
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;

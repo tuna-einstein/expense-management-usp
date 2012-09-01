@@ -4,6 +4,11 @@
  text-decoration:blink
 }
 
+.alignCenter {
+	text-align: center;
+	vertical-align: middle;
+}
+
 a.selected {
 	border: 1px SOLID red;
 	background-color: #D8E9F0;

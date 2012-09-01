@@ -34,9 +34,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.usp.expmgmt.client.DisplayTransactionsPanel.Type;
 import com.usp.expmgmt.client.service.ExpenseReportRetriever;
 import com.usp.expmgmt.client.service.ExpenseReportRetrieverAsync;
-import com.usp.expmgmt.client.service.LoggedInUserFetcher;
-import com.usp.expmgmt.client.service.LoggedInUserFetcherAsync;
-import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
 
 public class Main implements EntryPoint {
 
@@ -125,31 +122,31 @@ public class Main implements EntryPoint {
        
         projectName.setHTML("<h1>Loading.....</h1>");
         RootPanel.get("project-name").add(projectName);
-        LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
-        ownerEmailfetcher.getLoggedInUserEmail( new AsyncCallback<String>() {
-
-            public void onFailure(Throwable caught) {
-                Window.Location.replace("/logoutURL");
-
-            }
-            public void onSuccess(String result) {
-                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
-                if (info.getLoginUrl().equals("")) {
-                    ownerEmail = info.getEmail();
-                    //oracle.addAll(info.getContactList());
-                    dcPanelClaims.setOwnerEmail(ownerEmail);
-                    dcPanelDebts.setOwnerEmail(ownerEmail);
-                    dcPanelNetpays.setOwnerEmail(ownerEmail);
-                    init();
-                    expenseForm.init(ownerEmail);
-                    getContacts();
-
-                } else {
-                    Window.open(info.getLoginUrl(),  "_self", "");
-                }
-            }
-        });
-        
+     //   LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
+//        ownerEmailfetcher.getLoggedInUserEmail( new AsyncCallback<String>() {
+//
+//            public void onFailure(Throwable caught) {
+//                Window.Location.replace("/logoutURL");
+//
+//            }
+//            public void onSuccess(String result) {
+//                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
+//                if (info.getLoginUrl().equals("")) {
+//                    ownerEmail = info.getEmail();
+//                    //oracle.addAll(info.getContactList());
+//                    dcPanelClaims.setOwnerEmail(ownerEmail);
+//                    dcPanelDebts.setOwnerEmail(ownerEmail);
+//                    dcPanelNetpays.setOwnerEmail(ownerEmail);
+//                    init();
+//                    expenseForm.init(ownerEmail);
+//                    getContacts();
+//
+//                } else {
+//                    Window.open(info.getLoginUrl(),  "_self", "");
+//                }
+//            }
+//        });
+//        
       
         
         
@@ -186,23 +183,23 @@ public class Main implements EntryPoint {
     }
     
     private void getContacts() {
-        LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
-        ownerEmailfetcher.getOwnerEmail(new AsyncCallback<String>() {
-
-            public void onFailure(Throwable caught) {
-                Window.Location.replace("/logoutURL");
-            }
-
-            public void onSuccess(String result) {
-                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
-                if (info.getLoginUrl().equals("")) {
-                    oracle.addAll(info.getContactList());
-                    expenseForm.setOracle(oracle);
-                } else {
-                    Window.open(info.getLoginUrl(),  "_self", "");
-                }
-            }
-        });
+//        LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
+//        ownerEmailfetcher.getOwnerEmail(new AsyncCallback<String>() {
+//
+//            public void onFailure(Throwable caught) {
+//                Window.Location.replace("/logoutURL");
+//            }
+//
+//            public void onSuccess(String result) {
+//                LogInInfoJSO info= LogInInfoJSO.asLogInInfoJSO(result);
+//                if (info.getLoginUrl().equals("")) {
+//                    oracle.addAll(info.getContactList());
+//                    expenseForm.setOracle(oracle);
+//                } else {
+//                    Window.open(info.getLoginUrl(),  "_self", "");
+//                }
+//            }
+//        });
     }
 
     private void parseJsonData(String json) {

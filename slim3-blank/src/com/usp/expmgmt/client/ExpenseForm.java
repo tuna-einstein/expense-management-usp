@@ -30,9 +30,8 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.usp.expmgmt.client.service.LoggedInUserFetcher;
-import com.usp.expmgmt.client.service.LoggedInUserFetcherAsync;
-import com.usp.expmgmt.shared.jso.JavaScriptObjects.LogInInfoJSO;
+import com.usp.expmgmt.client.service.GetUserContacts;
+import com.usp.expmgmt.client.service.GetUserContactsAsync;
 
 public class ExpenseForm extends FormPanel {
     public static final String EMAIL = "emailArray";
@@ -50,9 +49,9 @@ public class ExpenseForm extends FormPanel {
     final Anchor addMoreDetails = new Anchor("Add More Details to this Expense and Submit");
     final CheckBox checkBox = new CheckBox();
     private final HorizontalPanel sendEmailPanel = new HorizontalPanel();
-    
+
     HandlerRegistration registration;
-    
+
     public ExpenseForm() {
         this.anchor = new Anchor("Add More People to this expense");
         anchor.setTitle("Add a person");
@@ -71,13 +70,13 @@ public class ExpenseForm extends FormPanel {
         descriptionText.setCharacterWidth(100);
         descriptionText.setVisibleLines(1);
         descriptionText.setName("description");
-        
+
         checkBox.setName("sendMail");
         checkBox.setFormValue("set");
         sendEmailPanel.add(new Label("Notify through Email: "));
         sendEmailPanel.add(checkBox);
         sendEmailPanel.setSpacing(8);
-        
+
         totalAmount.addKeyUpHandler(new KeyUpHandler() {
 
             public void onKeyUp(KeyUpEvent event) {
@@ -85,7 +84,7 @@ public class ExpenseForm extends FormPanel {
 
             }
         });
-        
+
         anchor.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 verticalPanel.add(getEmailAndAmount(""));
@@ -103,8 +102,8 @@ public class ExpenseForm extends FormPanel {
                 submit();
             }
         });
-        
-        
+
+
         addFormHandler(new FormHandler() {
 
 
@@ -116,9 +115,9 @@ public class ExpenseForm extends FormPanel {
                 while (verticalPanel.getWidgetCount() != 0) {
                     verticalPanel.remove(0);
                 }
-               registration.removeHandler();
-               textBoxList.clear();
-               amountBoxList.clear();
+                registration.removeHandler();
+                textBoxList.clear();
+                amountBoxList.clear();
                 init(ownerEmail.getText());
             }
 
@@ -142,12 +141,12 @@ public class ExpenseForm extends FormPanel {
 
                 for (SuggestBox box : textBoxList) {
                     if (!checkEmail(box)) {
-                        
+
                         event.setCancelled(true);
-                       
+
                     }
                 }
-                
+
                 if (event.isCancelled()) {
                     Window.alert("Invalid email");
                     return;
@@ -155,12 +154,12 @@ public class ExpenseForm extends FormPanel {
                 // Check amount boxes
                 for (TextBox box : amountBoxList) {
                     if(!checkAmount(box)) {
-                        
+
                         event.setCancelled(true);
-                        
+
                     }
                 }
-                
+
                 if (event.isCancelled()) {
                     Window.alert("Invalid amount");
                     return;
@@ -218,7 +217,7 @@ public class ExpenseForm extends FormPanel {
 
 
 
-       
+
 
         hp.add(ownerEmail);
         ownerEmail.setVisible(false);
@@ -253,8 +252,8 @@ public class ExpenseForm extends FormPanel {
         // Add action destination
         setAction("/save_expense");
 
-      
-     
+
+
         return this;
     }
 
@@ -265,37 +264,37 @@ public class ExpenseForm extends FormPanel {
         final SuggestBox box = new SuggestBox(oracle);
         textBoxList.add(box);
         box.setWidth("200px");
-       
-       
-     
+
+
+
         final TextBox amount = new TextBox();
 
         box.getTextBox().setName(EMAIL);
         box.getTextBox().setText(userEmail);
-        
+
         box.getTextBox().addValueChangeHandler(new ValueChangeHandler<String>() {
             public void onValueChange(ValueChangeEvent<String> event) {
                 if(!checkEmail(box)) {
-                  //  Window.alert("invalid email");
+                    //  Window.alert("invalid email");
                 }
-                
+
             }
         });
-        
-        
+
+
         amount.setName(AMOUNT);
         amount.setText("0");
         amountBoxList.add(amount);
         amount.addValueChangeHandler(new ValueChangeHandler<String>() {
-            
+
             public void onValueChange(ValueChangeEvent<String> event) {
                 if(!checkAmount(amount)) {
-                  //  Window.alert("Invalid amount");
+                    //  Window.alert("Invalid amount");
                 }
-                
+
             }
         });
-       
+
 
         final HorizontalPanel hp = new HorizontalPanel();
         hp.add(box);
@@ -364,8 +363,8 @@ public class ExpenseForm extends FormPanel {
             return false;
         }
     }
-    
-    
+
+    /*
     public void setContacts() {
         LoggedInUserFetcherAsync ownerEmailfetcher = GWT.create(LoggedInUserFetcher.class);
         ownerEmailfetcher.getOwnerEmail(new AsyncCallback<String>() {
@@ -382,6 +381,21 @@ public class ExpenseForm extends FormPanel {
                 } else {
                     Window.open(info.getLoginUrl(),  "_self", "");
                 }
+            }
+        });
+    } */
+
+    public void setContacts() {
+        GetUserContactsAsync userContactfetcher = GWT.create(GetUserContacts.class);
+        userContactfetcher.getUserContacts(new AsyncCallback<List<String>>() {
+
+            public void onFailure(Throwable caught) {
+                Window.alert(caught.getMessage());
+            }
+
+            public void onSuccess(List<String> result) {
+                oracle.addAll(result);
+                setOracle(oracle);
             }
         });
     }

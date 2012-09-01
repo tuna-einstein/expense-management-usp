@@ -9,7 +9,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -30,6 +29,7 @@ public class LeftPaneWidget extends Composite {
 	@UiField Anchor viewClaims;
 	@UiField Anchor viewDebts;
 	@UiField Anchor netPayments;
+	@UiField Anchor addContact;
 	@UiField Anchor feedback;
 	@UiField Anchor helpAndSupport;
 	Anchor currentSelection;
@@ -41,7 +41,7 @@ public class LeftPaneWidget extends Composite {
     final DisplayTransactionsPanel dcPanelNetpays = new DisplayTransactionsPanel(Type.NET);
     final ExpenseForm expenseForm = new ExpenseForm();
     final FeedbackForm feedbackForm = new FeedbackForm();
-    private String ownerEmail;
+    final AddContactWidget addContactWidget = new AddContactWidget();
     
     final ScrollPanel centerContentWidget;
     
@@ -107,6 +107,16 @@ public class LeftPaneWidget extends Composite {
       centerContentWidget.add(dcPanelNetpays);
 	}
 	
+	@UiHandler("addContact")
+    void handleClickAddContact(ClickEvent e) {
+        currentSelection.getElement().removeClassName("selected");
+      addContact.getElement().addClassName("selected");
+      currentSelection = addContact;
+      
+      centerContentWidget.clear();
+      centerContentWidget.add(addContactWidget);
+    }
+	
 	@UiHandler("helpAndSupport")
 	void handleClickHelpAndSupport(ClickEvent e) {
 		currentSelection.getElement().removeClassName("selected");
@@ -118,14 +128,13 @@ public class LeftPaneWidget extends Composite {
 	}
 	
 	public void init(String ownerEmail) {
-	    this.ownerEmail = ownerEmail;
 	    dcPanelClaims.setOwnerEmail(ownerEmail);
         dcPanelDebts.setOwnerEmail(ownerEmail);
         dcPanelNetpays.setOwnerEmail(ownerEmail);
         expenseForm.init(ownerEmail);
-        if (!"test@example.com".equals(ownerEmail)) {
+       // if (!"test@example.com".equals(ownerEmail)) {
         expenseForm.setContacts();
-        }
+       // }
 	}
 	
 	private void initClaims() {
