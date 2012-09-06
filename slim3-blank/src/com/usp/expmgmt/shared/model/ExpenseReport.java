@@ -3,13 +3,13 @@ package com.usp.expmgmt.shared.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 import org.slim3.datastore.Attribute;
 import org.slim3.datastore.Model;
+
+import com.google.appengine.api.datastore.Key;
 
 @Model(schemaVersion = 1)
 public class ExpenseReport implements Serializable {
@@ -37,6 +37,8 @@ public class ExpenseReport implements Serializable {
     private String description = "no description";
     
     private String date = "12th Jan, 2014";
+    
+    private Date dateAndTime = null;
     
     /**
      * Returns the key.
@@ -204,5 +206,13 @@ public class ExpenseReport implements Serializable {
         report.setOwnerEmail(ownerEmail);
         report.setVersion(version);
         return report;
+    }
+
+    public Date getDateAndTime() {
+        return dateAndTime;
+    }
+
+    public void setDateAndTime(Date dateAndTime) {
+        this.dateAndTime = dateAndTime;
     }
 }

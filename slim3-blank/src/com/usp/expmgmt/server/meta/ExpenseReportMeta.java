@@ -1,6 +1,6 @@
 package com.usp.expmgmt.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-09-05 07:44:43")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-09-06 10:17:03")
 /** */
 public final class ExpenseReportMeta extends org.slim3.datastore.ModelMeta<com.usp.expmgmt.shared.model.ExpenseReport> {
 
@@ -9,6 +9,9 @@ public final class ExpenseReportMeta extends org.slim3.datastore.ModelMeta<com.u
 
     /** */
     public final org.slim3.datastore.StringAttributeMeta<com.usp.expmgmt.shared.model.ExpenseReport> date = new org.slim3.datastore.StringAttributeMeta<com.usp.expmgmt.shared.model.ExpenseReport>(this, "date", "date");
+
+    /** */
+    public final org.slim3.datastore.CoreAttributeMeta<com.usp.expmgmt.shared.model.ExpenseReport, java.util.Date> dateAndTime = new org.slim3.datastore.CoreAttributeMeta<com.usp.expmgmt.shared.model.ExpenseReport, java.util.Date>(this, "dateAndTime", "dateAndTime", java.util.Date.class);
 
     /** */
     public final org.slim3.datastore.StringAttributeMeta<com.usp.expmgmt.shared.model.ExpenseReport> description = new org.slim3.datastore.StringAttributeMeta<com.usp.expmgmt.shared.model.ExpenseReport>(this, "description", "description");
@@ -44,6 +47,7 @@ public final class ExpenseReportMeta extends org.slim3.datastore.ModelMeta<com.u
         com.usp.expmgmt.shared.model.ExpenseReport model = new com.usp.expmgmt.shared.model.ExpenseReport();
         model.setAmountList(toList(java.lang.Double.class, entity.getProperty("amountList")));
         model.setDate((java.lang.String) entity.getProperty("date"));
+        model.setDateAndTime((java.util.Date) entity.getProperty("dateAndTime"));
         model.setDescription((java.lang.String) entity.getProperty("description"));
         model.setEmailList(toList(java.lang.String.class, entity.getProperty("emailList")));
         model.setKey(entity.getKey());
@@ -63,6 +67,7 @@ public final class ExpenseReportMeta extends org.slim3.datastore.ModelMeta<com.u
         }
         entity.setProperty("amountList", m.getAmountList());
         entity.setProperty("date", m.getDate());
+        entity.setProperty("dateAndTime", m.getDateAndTime());
         entity.setProperty("description", m.getDescription());
         entity.setProperty("emailList", m.getEmailList());
         entity.setProperty("ownerEmail", m.getOwnerEmail());
@@ -145,6 +150,10 @@ public final class ExpenseReportMeta extends org.slim3.datastore.ModelMeta<com.u
             writer.setNextPropertyName("date");
             encoder0.encode(writer, m.getDate());
         }
+        if(m.getDateAndTime() != null){
+            writer.setNextPropertyName("dateAndTime");
+            encoder0.encode(writer, m.getDateAndTime());
+        }
         if(m.getDescription() != null){
             writer.setNextPropertyName("description");
             encoder0.encode(writer, m.getDescription());
@@ -202,6 +211,8 @@ public final class ExpenseReportMeta extends org.slim3.datastore.ModelMeta<com.u
         }
         reader = rootReader.newObjectReader("date");
         m.setDate(decoder0.decode(reader, m.getDate()));
+        reader = rootReader.newObjectReader("dateAndTime");
+        m.setDateAndTime(decoder0.decode(reader, m.getDateAndTime()));
         reader = rootReader.newObjectReader("description");
         m.setDescription(decoder0.decode(reader, m.getDescription()));
         reader = rootReader.newObjectReader("emailArray");
