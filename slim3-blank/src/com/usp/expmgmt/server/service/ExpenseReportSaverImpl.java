@@ -1,7 +1,10 @@
 package com.usp.expmgmt.server.service;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,7 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
     public ExpenseReport save(Map<String, Object> input) {
         ExpenseReport report = new ExpenseReport();
         BeanUtil.copy(input, report);
+        report.setDateAndTime(dateFromString(report.getDate()));
         Transaction tx = Datastore.beginTransaction();
         Datastore.put(report);
         tx.commit();
@@ -122,5 +126,20 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
             }
         }
         return change;
+    }
+    
+    private Date dateFromString(String dateString) {
+        if (dateString == null || dateString.equals("")) {
+            return null;
+        }
+        //2012 Sep 2 01:55:12
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("yyyy MMM d hh:mm:ss", Locale.ENGLISH).parse(dateString);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return date;
     }
 }
