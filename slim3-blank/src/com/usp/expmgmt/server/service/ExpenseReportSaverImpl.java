@@ -22,6 +22,7 @@ import com.usp.expmgmt.shared.model.ChangeLogMessage;
 import com.usp.expmgmt.shared.model.ExpenseReport;
 import com.usp.expmgmt.shared.util.EmailSender;
 import com.usp.expmgmt.shared.util.ExpenseContent;
+import com.usp.expmgmt.shared.util.ServerSideUtil;
 
 public class ExpenseReportSaverImpl implements ExpenseReportSaver {
     private final EmailSender sender = new EmailSender();
@@ -29,6 +30,11 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         ExpenseReport report = new ExpenseReport();
         BeanUtil.copy(input, report);
         report.setDateAndTime(dateFromString(report.getDate()));
+        
+        Key parentKey = ServerSideUtil.getParentKey(report.getOwnerEmail());
+        Key childKey = Datastore.allocateId(parentKey, ExpenseReport.class);
+        report.setKey(childKey);
+        
         Transaction tx = Datastore.beginTransaction();
         Datastore.put(report);
         tx.commit();

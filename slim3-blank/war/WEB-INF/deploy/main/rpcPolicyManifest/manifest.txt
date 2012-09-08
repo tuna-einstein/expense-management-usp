@@ -1,11 +1,2 @@
 # Module main
 # RPC service class, partial path of RPC policy file
-com.usp.expmgmt.client.service.ExpenseReportRetriever, 595E0E1C3BA306A4DE1BAF73150EE5B6.gwt.rpc
-com.usp.expmgmt.client.service.ExpenseReportSaver, 9FA178E3493711643349231A243DACC5.gwt.rpc
-com.usp.expmgmt.client.service.ClearClaimsForX, AC5FC933B81B678339BDD7607C94EEA5.gwt.rpc
-com.usp.expmgmt.client.service.AddUserContact, 63841D389AB0F0C17CBE1482937EA611.gwt.rpc
-com.usp.expmgmt.client.service.UserExpenseReportRetriever, 9F7D7EB4A1223F3FB148997358000BDD.gwt.rpc
-com.usp.expmgmt.client.service.GetUserContacts, 3EAA0102CB7F77A1BB6036B1EF7C9C1D.gwt.rpc
-com.usp.expmgmt.client.service.FeedbackDataSaver, CEC0922FD9399B0D73762D3370F22FDE.gwt.rpc
-com.usp.expmgmt.client.service.GetLoggedInUserEmail, 864CC3E6FA2B236E77DB0F20543F293E.gwt.rpc
-com.usp.expmgmt.client.service.ChangeLogRetriever, 6D540EC432EFA83BE5F44E1BFC833493.gwt.rpc
