@@ -83,11 +83,11 @@ public class DisplayTransactionsPanel extends ScrollPanel {
        }
        
        if (type == Type.CLAIM) {
-           Anchor anchorClear = new Anchor("Clear", true);
-           anchorClear.setTitle("Resets amount to 0");
-           anchorClear.setName(userAndAmount.getEmail());
-        //   anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail(), anchorClear));
-           flexTable.setWidget(flexTable.getRowCount() - 1, 3, anchorClear);
+//           Anchor anchorClear = new Anchor("Clear", true);
+//           anchorClear.setTitle("Resets amount to 0");
+//           anchorClear.setName(userAndAmount.getEmail());
+//        //   anchorClear.addClickHandler(getClearAnchorClickHandler(userAndAmount.getEmail(), anchorClear));
+//           flexTable.setWidget(flexTable.getRowCount() - 1, 3, anchorClear);
            
        }
     }

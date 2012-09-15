@@ -129,12 +129,12 @@ public class DisplayExpenseReport extends VerticalPanel{
 
          
          if (type == DisplayTransactionsPanel.Type.CLAIM) {
-             grid.setWidget(report.getEmailList().length(), 0, new HTML("LogMessage"));
-             grid.setWidget(report.getEmailList().length(), 1, logMessage);
-
-             grid.setWidget(report.getEmailList().length() + 1, 0, getAnchor("Delete"));
-             grid.setWidget(report.getEmailList().length() + 1, 1, getAnchor("Save"));
-             grid.getCellFormatter().setAlignment(report.getEmailList().length() + 1, 1, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_MIDDLE);
+//             grid.setWidget(report.getEmailList().length(), 0, new HTML("LogMessage"));
+//             grid.setWidget(report.getEmailList().length(), 1, logMessage);
+//
+//             grid.setWidget(report.getEmailList().length() + 1, 0, getAnchor("Delete"));
+//             grid.setWidget(report.getEmailList().length() + 1, 1, getAnchor("Save"));
+//             grid.getCellFormatter().setAlignment(report.getEmailList().length() + 1, 1, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_MIDDLE);
          }
     add(grid);
     add(showLogAnchor);

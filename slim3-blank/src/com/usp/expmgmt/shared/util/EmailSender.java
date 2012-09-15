@@ -41,17 +41,11 @@ public class EmailSender {
             attachment.setContent(attachmentData, "text/html");
             mp.addBodyPart(attachment);
             msg.setContent(mp);
-            if (from.equals("test@example.com")) {
-                msg.writeTo(System.out);
-            } else {
-                Transport.send(msg);
-            } 
+            Transport.send(msg);
         } catch (MessagingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } 
     }
     private Message compose(String from, String subject, String body, List<String> receipients) {
         Properties props = new Properties();
@@ -59,14 +53,19 @@ public class EmailSender {
         Message msg = new MimeMessage(mailSession);
 
         try {
-            msg.setFrom(new InternetAddress(from));
+            if (from != null) {
+                msg.setFrom(new InternetAddress(from));
+            } else {
+                msg.setFrom(new InternetAddress("tuna.einstein@gmail.com"));
+            }
+
             for (String to : receipients) {
                 msg.addRecipient(Message.RecipientType.TO,
                     new InternetAddress(to));
             }
             msg.setSubject(subject);
             msg.setText(body);
-            
+
         } catch (AddressException e) {
             e.printStackTrace();
         } catch (MessagingException e) {

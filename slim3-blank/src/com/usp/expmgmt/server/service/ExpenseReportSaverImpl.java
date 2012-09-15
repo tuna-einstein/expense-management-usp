@@ -3,7 +3,9 @@ package com.usp.expmgmt.server.service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -20,6 +22,7 @@ import com.google.gson.Gson;
 import com.usp.expmgmt.client.service.ExpenseReportSaver;
 import com.usp.expmgmt.shared.model.ChangeLogMessage;
 import com.usp.expmgmt.shared.model.ExpenseReport;
+import com.usp.expmgmt.shared.model.OneToOneRecord;
 import com.usp.expmgmt.shared.util.EmailSender;
 import com.usp.expmgmt.shared.util.ExpenseContent;
 import com.usp.expmgmt.shared.util.ServerSideUtil;
@@ -35,8 +38,18 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         Key childKey = Datastore.allocateId(parentKey, ExpenseReport.class);
         report.setKey(childKey);
         
+        List<OneToOneRecord> records = new ArrayList<OneToOneRecord>();
+       for (int i = 0; i < report.getEmailList().size(); i++) {
+           String slaveEmail = report.getEmailList().get(i);
+           double amount = report.getAmountList().get(i);
+           OneToOneRecord record = ServerSideUtil.getRecord(report.getOwnerEmail(), slaveEmail, parentKey);
+           record.setAmount(record.getAmount() + amount);
+           records.add(record);
+       }
+        
         Transaction tx = Datastore.beginTransaction();
         Datastore.put(report);
+        Datastore.put(records);
         tx.commit();
         String checkedValue = (String) input.get("sendMail");
         if ("set".equals(checkedValue)) {
