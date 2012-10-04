@@ -44,6 +44,7 @@ public class UserExpenseReportRetrieverImpl implements UserExpenseReportRetrieve
         List<ExpenseReport> reports =  Datastore.query(reportMeta)
                 .filter(reportMeta.ownerEmail.equal(ownerEmail))
                 .filter(reportMeta.emailList.equal(userEmail))
+                .sort(reportMeta.dateAndTime.desc)
                 .asList();
         return reports;
     }
