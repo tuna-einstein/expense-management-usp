@@ -99,6 +99,7 @@ public class ExpenseForm extends FormPanel {
         });
         button.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
+                button.setEnabled(false);
                 submit();
             }
         });
@@ -109,7 +110,7 @@ public class ExpenseForm extends FormPanel {
 
 
             public void onSubmitComplete(FormSubmitCompleteEvent event) {
-
+                button.setEnabled(true);
                 descriptionText.setText("");
                 Window.alert(event.getResults());
                 while (verticalPanel.getWidgetCount() != 0) {

@@ -129,12 +129,12 @@ public class DisplayExpenseReport extends VerticalPanel{
 
          
          if (type == DisplayTransactionsPanel.Type.CLAIM) {
-//             grid.setWidget(report.getEmailList().length(), 0, new HTML("LogMessage"));
-//             grid.setWidget(report.getEmailList().length(), 1, logMessage);
-//
-//             grid.setWidget(report.getEmailList().length() + 1, 0, getAnchor("Delete"));
-//             grid.setWidget(report.getEmailList().length() + 1, 1, getAnchor("Save"));
-//             grid.getCellFormatter().setAlignment(report.getEmailList().length() + 1, 1, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_MIDDLE);
+             grid.setWidget(report.getEmailList().length(), 0, new HTML("LogMessage"));
+             grid.setWidget(report.getEmailList().length(), 1, logMessage);
+
+             grid.setWidget(report.getEmailList().length() + 1, 0, getAnchor("Delete"));
+             grid.setWidget(report.getEmailList().length() + 1, 1, getAnchor("Save"));
+             grid.getCellFormatter().setAlignment(report.getEmailList().length() + 1, 1, HasHorizontalAlignment.ALIGN_RIGHT, HasVerticalAlignment.ALIGN_MIDDLE);
          }
     add(grid);
     add(showLogAnchor);
@@ -178,16 +178,18 @@ public class DisplayExpenseReport extends VerticalPanel{
         
          public void onFailure(Throwable caught) {
              Window.alert(caught.getMessage());
+             uiObject.setEnabled(true);
          }
 
          public void onSuccess(String json) {
-             
+             uiObject.setEnabled(true);
              Window.alert(json);
              
          }
      };
         public void onClick(ClickEvent event) {
-            if (uiObject.getName().equals("Save")) {
+            uiObject.setEnabled(false);
+            if (uiObject.getName().equals("Save")) {         
             service.save(popup.getJson(), callback);
             } else if (uiObject.getName().equals("Delete")) {
                 deleteExpenseReportConfirm.setRequestString(popup.getJson());

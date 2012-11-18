@@ -90,10 +90,21 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         
         ChangeLogMessage msg = getLogMessage(report.getKey(), content.getLogMessage(), change);
         
+        Key parentKey = ServerSideUtil.getParentKey(report.getOwnerEmail());
+        List<OneToOneRecord> records = new ArrayList<OneToOneRecord>();
+        for (int i = 0; i < report.getEmailList().size(); i++) {
+            String slaveEmail = report.getEmailList().get(i);
+            double amount = report.getAmountList().get(i) - oldReport.getAmountList().get(i);
+            OneToOneRecord record = ServerSideUtil.getRecord(report.getOwnerEmail(), slaveEmail, parentKey);
+            record.setAmount(record.getAmount() + amount);
+            records.add(record);
+        }
+        
         Transaction tx = Datastore.beginTransaction();
         Datastore.put(report);
+        Datastore.put(records);
         tx.commit();
-        
+        sender.sendEmail(report.getOwnerEmail(), "Updated Report from:" + report.getOwnerEmail(), getBodyOfMail(report) + "\n" + change, report.getEmailList());
         
         tx = Datastore.beginTransaction();
         Datastore.put(msg);
@@ -106,17 +117,28 @@ public class ExpenseReportSaverImpl implements ExpenseReportSaver {
         Gson gson = new Gson();
         ExpenseContent content = gson.fromJson(json, ExpenseContent.class);
         ExpenseReport report = content.toExpenseReport();
-        
+        ExpenseReport oldReport = Datastore.get(ExpenseReport.class, report.getKey());
         if (!report.getOwnerEmail().equals(getLoggedInUser())) {
             return getLoggedInUser() + " can't delete this transaction :)";
         }
         //gson.
        // BeanUtil.copy(input, report);
         
-        
+        Key parentKey = ServerSideUtil.getParentKey(report.getOwnerEmail());
+        List<OneToOneRecord> records = new ArrayList<OneToOneRecord>();
+        for (int i = 0; i < report.getEmailList().size(); i++) {
+            String slaveEmail = report.getEmailList().get(i);
+            double amount = - oldReport.getAmountList().get(i);
+            OneToOneRecord record = ServerSideUtil.getRecord(report.getOwnerEmail(), slaveEmail, parentKey);
+            record.setAmount(record.getAmount() + amount);
+            records.add(record);
+        }
+
         Transaction tx = Datastore.beginTransaction();
         Datastore.delete(report.getKey());
+        Datastore.put(records);
         tx.commit();
+        sender.sendEmail(report.getOwnerEmail(), "Deleted Report by:" + report.getOwnerEmail(), getBodyOfMail(oldReport) , report.getEmailList());
         return "Delete Successful";
     }
     
