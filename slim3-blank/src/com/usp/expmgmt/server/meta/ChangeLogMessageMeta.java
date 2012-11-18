@@ -1,6 +1,6 @@
 package com.usp.expmgmt.server.meta;
 
-//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-10-03 22:51:29")
+//@javax.annotation.Generated(value = { "slim3-gen", "@VERSION@" }, date = "2012-11-17 22:34:17")
 /** */
 public final class ChangeLogMessageMeta extends org.slim3.datastore.ModelMeta<com.usp.expmgmt.shared.model.ChangeLogMessage> {
 

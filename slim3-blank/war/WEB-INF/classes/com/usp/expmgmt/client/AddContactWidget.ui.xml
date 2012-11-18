@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.headerMessage {
+			font-weight: bold;
+			font-size: 1.5em;
+			padding: 1em;
+		}
+		
+		.linkStyle {
+			padding: 1em;
+			text-align: center;
+		}
+
+		.buttonStyle {
+			display: block;
+			margin:1em;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<g:Label addStyleNames="{style.headerMessage}">
+			Add emails to your contact list.
+		</g:Label>
+		<g:FlowPanel ui:field="contentPanel" />
+		<g:Anchor ui:field="addMoreAnchor" href="javascript:;"
+			addStyleNames="{style.linkStyle}">Add Contact</g:Anchor>
+		<g:Button ui:field="submit" 
+			addStyleNames="{style.linkStyle} {style.buttonStyle}">Submit</g:Button>
+	</g:HTMLPanel>
+</ui:UiBinder> 
