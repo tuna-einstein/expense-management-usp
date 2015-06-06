@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.ExpenseReportSaver
+path: 9FA178E3493711643349231A243DACC5.gwt.rpc

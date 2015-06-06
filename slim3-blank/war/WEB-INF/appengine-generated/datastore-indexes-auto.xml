@@ -1,18 +1,11 @@
-<!-- Indices written at Sat, 15 Sep 2012 09:43:24 PDT -->
+<!-- Indices written at Sat, 6 Jun 2015 14:55:16 PDT -->
 
 <datastore-indexes>
 
-    <!-- Used 2 times in query history -->
+    <!-- Used 1 time in query history -->
     <datastore-index kind="OneToOneRecord" ancestor="false" source="auto">
         <property name="masterEmail" direction="asc"/>
         <property name="slaveEmail" direction="asc"/>
-    </datastore-index>
-
-    <!-- Used 2 times in query history -->
-    <datastore-index kind="ExpenseReport" ancestor="false" source="auto">
-        <property name="emailList" direction="asc"/>
-        <property name="ownerEmail" direction="asc"/>
-        <property name="dateAndTime" direction="desc"/>
     </datastore-index>
 
 </datastore-indexes>

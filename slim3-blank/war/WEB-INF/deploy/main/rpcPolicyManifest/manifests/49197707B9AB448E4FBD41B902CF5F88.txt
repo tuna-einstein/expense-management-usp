@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.AddUserContact
+path: 63841D389AB0F0C17CBE1482937EA611.gwt.rpc

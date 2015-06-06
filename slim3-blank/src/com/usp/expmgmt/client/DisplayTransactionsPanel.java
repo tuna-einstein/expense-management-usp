@@ -14,9 +14,13 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.usp.expmgmt.client.service.ClearClaimsForX;
 import com.usp.expmgmt.client.service.ClearClaimsForXAsync;
+import com.usp.expmgmt.client.service.SendReminderEmailService;
+import com.usp.expmgmt.client.service.SendReminderEmailServiceAsync;
 import com.usp.expmgmt.client.service.UserExpenseReportRetriever;
 import com.usp.expmgmt.client.service.UserExpenseReportRetrieverAsync;
 import com.usp.expmgmt.shared.jso.JavaScriptObjects.UserAndAmountJSO;
+import com.usp.expmgmt.shared.model.ReminderEmailData;
+import com.usp.expmgmt.shared.util.UserMapperAmountReducer.UserAndAmount;
 
 public class DisplayTransactionsPanel extends ScrollPanel {
     public static enum Type  {
@@ -71,16 +75,18 @@ public class DisplayTransactionsPanel extends ScrollPanel {
             showTab.setTitle("Show All Claim in Detail");
         }else if (type == Type.DEBT) {
             showTab.setTitle("Show All Debts in Detail");
+        } else if (type == Type.NET) {
+            showTab.setText("Poke");
         }
         
       
         
-        showTab.addClickHandler(new ShowClickHandler(userAndAmount.getEmail()));
+        showTab.addClickHandler(new ShowClickHandler(userAndAmount));
 
        flexTable.setText(flexTable.getRowCount() - 1, 1, String.valueOf(userAndAmount.getAmount()));
-       if (type != Type.NET) {
+       //if (type != Type.NET) {
            flexTable.setWidget(flexTable.getRowCount() - 1, 2, showTab);
-       }
+       //}
        
        if (type == Type.CLAIM) {
 //           Anchor anchorClear = new Anchor("Clear", true);
@@ -124,9 +130,9 @@ public class DisplayTransactionsPanel extends ScrollPanel {
     }
 
     private class ShowClickHandler implements ClickHandler {
-        String userEmail;
-        ShowClickHandler(String userEmail) {
-            this.userEmail = userEmail;
+        UserAndAmountJSO userAndAmount;
+        ShowClickHandler(UserAndAmountJSO userAndAmount) {
+            this.userAndAmount = userAndAmount;
         }
      private final UserExpenseReportRetrieverAsync service = GWT.create(UserExpenseReportRetriever.class);
 
@@ -146,9 +152,9 @@ public class DisplayTransactionsPanel extends ScrollPanel {
 //             pop.show();
              String header = "";
              if (type == Type.CLAIM) {
-                 header = "Claims for " + userEmail;
+                 header = "Claims for " + userAndAmount.getEmail();
              } else if (type == Type.DEBT) {
-                 header = "Debts for " + userEmail;
+                 header = "Debts for " + userAndAmount.getEmail();
              }
              reportList.init(json, header);
              removeAll();
@@ -159,10 +165,29 @@ public class DisplayTransactionsPanel extends ScrollPanel {
     
         public void onClick(ClickEvent event) {
             if (type == Type.CLAIM) {
-                service.getUserExpenseReportsAsJson(ownerEmail, userEmail, callback);
+                service.getUserExpenseReportsAsJson(ownerEmail, userAndAmount.getEmail(), callback);
             } else if (type == Type.DEBT) {
-                service.getUserExpenseReportsAsJson(userEmail, ownerEmail, callback);
+                service.getUserExpenseReportsAsJson(userAndAmount.getEmail(), ownerEmail, callback);
+            } else if (type == Type.NET) {
+                sendReminderEmail(userAndAmount);
             }
+        }
+        
+        private void sendReminderEmail(final UserAndAmountJSO userAndAmount) {
+            SendReminderEmailServiceAsync service = GWT.create(SendReminderEmailService.class);
+            ReminderEmailData data = new ReminderEmailData();
+            data.setAmount(String.valueOf(userAndAmount.getAmount()));
+            data.setEmailTo(userAndAmount.getEmail());
+            service.sendEmail(data, new AsyncCallback<Void>() {
+                
+                public void onSuccess(Void result) {
+                    Window.alert("Poked " + userAndAmount.getEmail());   
+                }
+                
+                public void onFailure(Throwable caught) {
+                 Window.alert("Poking failed : " + caught);   
+                }
+            });
         }
     }
 }
