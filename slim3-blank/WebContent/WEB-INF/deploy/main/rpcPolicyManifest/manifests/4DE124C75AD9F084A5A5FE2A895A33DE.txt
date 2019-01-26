@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.GetUserContacts
+path: EF8DAFC497376F8F3C4F3E1074172EE3.gwt.rpc

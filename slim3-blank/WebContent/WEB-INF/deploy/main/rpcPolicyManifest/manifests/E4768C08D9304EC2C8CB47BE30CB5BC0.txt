@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.SendReminderEmailService
+path: 58D7A18A42E5DE8C2CE9236CA6F2CD5D.gwt.rpc

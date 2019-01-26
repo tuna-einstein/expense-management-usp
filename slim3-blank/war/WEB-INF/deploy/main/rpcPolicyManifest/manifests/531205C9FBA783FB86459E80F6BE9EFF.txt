@@ -1,2 +1,0 @@
-serviceClass: com.usp.expmgmt.client.service.UserExpenseReportRetriever
-path: 9F7D7EB4A1223F3FB148997358000BDD.gwt.rpc

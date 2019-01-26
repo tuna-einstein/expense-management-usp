@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.ChangeLogRetriever
+path: 7DB543300CCA37AFB43FA910AD3D9E26.gwt.rpc

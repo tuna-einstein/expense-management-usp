@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.FeedbackDataSaver
+path: 42664A5126FE8481983CDF22E5A16992.gwt.rpc

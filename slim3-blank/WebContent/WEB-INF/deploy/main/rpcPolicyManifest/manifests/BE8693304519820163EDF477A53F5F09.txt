@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.GetLoggedInUserEmail
+path: CFBD467FFEBD46F239E1528671359B46.gwt.rpc

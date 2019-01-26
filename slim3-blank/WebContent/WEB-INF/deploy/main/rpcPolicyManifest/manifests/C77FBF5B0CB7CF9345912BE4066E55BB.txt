@@ -1,0 +1,2 @@
+serviceClass: com.usp.expmgmt.client.service.ClearClaimsForX
+path: 769269219B802FA4D0AE226F93402413.gwt.rpc
